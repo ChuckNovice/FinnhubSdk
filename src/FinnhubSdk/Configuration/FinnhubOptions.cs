@@ -25,9 +25,9 @@ public class FinnhubOptions
     public string BaseUrl { get; set; } = "https://finnhub.io/api/v1";
 
     /// <summary>
-    /// Gets or sets the WebSocket URL for real-time data
+    /// Gets or sets the WebSocket URL for real-time data.
+    /// Must be a valid WebSocket URL (ws:// or wss://).
     /// </summary>
-    [Url]
     public string WebSocketUrl { get; set; } = "wss://ws.finnhub.io";
 
     /// <summary>

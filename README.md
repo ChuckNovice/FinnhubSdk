@@ -80,7 +80,7 @@ public class MarketService
 var quote = await finnhub.Stocks.GetQuoteAsync("AAPL");
 
 Console.WriteLine($"Price: ${quote.CurrentPrice}");
-Console.WriteLine($"Change: {quote.ChangePercent:F2}%");
+Console.WriteLine($"Change: {quote.PercentChange:F2}%");
 Console.WriteLine($"High: ${quote.High}, Low: ${quote.Low}");
 ```
 
