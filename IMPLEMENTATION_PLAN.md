@@ -4,28 +4,31 @@
 
 **Last Updated**: 2026-01-25
 
-### ✅ Completed Phases (Days 1-12)
+### ✅ Completed Phases (Days 1-14)
 
 - **Phase 1: Foundation Setup** ✅ - Complete infrastructure with DI, error handling, Polly policies
-- **Phase 2: Stocks API** ✅ - All endpoints implemented with 12 unit tests + 8 integration tests
-- **Phase 3: News API** ✅ - All endpoints implemented with 7 unit tests + 6 integration tests
+- **Phase 2: Stocks API** ✅ - All endpoints implemented with 12 unit tests
+- **Phase 3: News API** ✅ - All endpoints implemented with 7 unit tests
 - **Phase 4: WebSocket Client** ✅ - Async callbacks, auto-reconnect, subscription management + 31 new tests
 - **Phase 5: Testing & Documentation** ✅ - Comprehensive README with all examples, 50 unit tests
+- **Phase 6: NuGet Package Preparation** ✅ - CI/CD workflows, package icon, ready for publication
 
 ### 📊 Progress Summary
 
 - **Total Unit Tests**: 50/50 passing (100%)
-- **Total Integration Tests**: 14 created (sequential with 2s delays)
 - **Build Status**: Clean (0 warnings, 0 errors)
 - **REST API**: Fully functional (Stocks + News)
 - **WebSocket**: ✅ Fully implemented with async callbacks and auto-reconnect
 - **Documentation**: ✅ Comprehensive README complete
-- **Files Created**: 45+ source files, 7 test files, build configuration complete
-- **Success Criteria**: 9/10 met (90% complete)
+- **CI/CD**: ✅ GitHub Actions workflows for CI, pre-release, and release
+- **Success Criteria**: 9/9 met (100% complete)
 
-### 🎯 Next Steps
+### 🎯 Ready for Publication
 
-1. **Phase 6**: Set up CI/CD and prepare NuGet package (icon, workflows)
+To publish to NuGet.org:
+1. Add `NUGET_API_KEY` secret to GitHub repository settings
+2. Push to `develop` branch for pre-release version
+3. Push to `main` branch or create a version tag (e.g., `v1.0.0`) for stable release
 
 ### ⚠️ Implementation Notes
 
@@ -79,8 +82,7 @@ FinnhubSdk/
 │       ├── Exceptions/                  # Custom exceptions
 │       └── Serialization/               # JSON converters
 ├── tests/
-│   ├── FinnhubSdk.Tests.Unit/          # Unit tests with mocks
-│   └── FinnhubSdk.Tests.Integration/   # Integration tests
+│   └── FinnhubSdk.Tests.Unit/          # Unit tests with mocks
 ├── Directory.Build.props                # Shared build properties
 ├── Directory.Packages.props             # Central package management
 ├── FinnhubSdk.sln                      # Solution file
@@ -282,7 +284,6 @@ public class MarketService
 - `src/FinnhubSdk/Exceptions/FinnhubWebSocketException.cs` - WebSocket errors
 - `LICENSE` - Apache 2.0 license with ChuckNovice copyright
 - `tests/FinnhubSdk.Tests.Unit/` - MSTest unit test project
-- `tests/FinnhubSdk.Tests.Integration/` - MSTest integration test project
 
 **Verification**: ✅ Solution builds cleanly with 0 warnings, 0 errors
 
@@ -298,14 +299,12 @@ public class MarketService
 3. ✅ Implemented internal CandleResponse with ToCandles() converter (no separate converter needed)
 4. ✅ Implemented StocksService with all 4 core methods
 5. ✅ Wrote 12 unit tests with Moq (all passing)
-6. ✅ Wrote 8 integration tests with rate-limit protection (sequential execution)
-7. ✅ Added XML documentation to all public APIs
+6. ✅ Added XML documentation to all public APIs
 
 **Implementation Notes**:
 - CandleResponse handles parallel array deserialization from Finnhub API format
 - No separate UnixTimestampConverter needed - handled in CandleResponse.ToCandles()
 - StocksService passes `null` for queryParameters parameter to GetAsync
-- Integration tests use FinnhubTestFixture with 2-second delays and SemaphoreSlim
 
 **Models Created**:
 - `Quote`: CurrentPrice, High, Low, Open, PreviousClose, Change, PercentChange, Timestamp
@@ -336,12 +335,10 @@ public class MarketService
 - `src/FinnhubSdk/Services/Stocks/IStocksService.cs`
 - `src/FinnhubSdk/Services/Stocks/StocksService.cs`
 - `tests/FinnhubSdk.Tests.Unit/Services/StocksServiceTests.cs` (12 tests)
-- `tests/FinnhubSdk.Tests.Integration/Services/StocksServiceIntegrationTests.cs` (8 tests)
-- `tests/FinnhubSdk.Tests.Integration/FinnhubTestFixture.cs` (rate-limit management)
 
-**Test Results**: ✅ 12/12 unit tests passing, 8 integration tests created
+**Test Results**: ✅ 12/12 unit tests passing
 
-**Verification**: ✅ Integration tests can retrieve real quotes, candles, profiles, and search results for AAPL/MSFT
+**Verification**: ✅ All unit tests pass with mocked HTTP responses
 
 ### Phase 3: News API Implementation (Days 6-7) ✅ COMPLETED
 
@@ -353,8 +350,7 @@ public class MarketService
 1. ✅ Created News models with nested types for sentiment data
 2. ✅ Implemented NewsService with all 3 methods
 3. ✅ Wrote 7 unit tests with Moq (all passing)
-4. ✅ Wrote 6 integration tests with rate-limit protection
-5. ✅ Added XML documentation to all public APIs
+4. ✅ Added XML documentation to all public APIs
 
 **Implementation Notes**:
 - NewsArticle uses long for DateTime (Unix timestamp from API)
@@ -379,11 +375,10 @@ public class MarketService
 - `src/FinnhubSdk/Services/News/INewsService.cs`
 - `src/FinnhubSdk/Services/News/NewsService.cs`
 - `tests/FinnhubSdk.Tests.Unit/Services/NewsServiceTests.cs` (7 tests)
-- `tests/FinnhubSdk.Tests.Integration/Services/NewsServiceIntegrationTests.cs` (6 tests)
 
-**Test Results**: ✅ 7/7 unit tests passing (19 total unit tests), 6 integration tests created (14 total)
+**Test Results**: ✅ 7/7 unit tests passing (19 total unit tests)
 
-**Verification**: ✅ Can retrieve company news for AAPL/MSFT, general market news, and sentiment analysis
+**Verification**: ✅ All unit tests pass with mocked HTTP responses
 
 ### Phase 4: WebSocket Client Implementation (Days 8-10) ✅ COMPLETED
 
@@ -431,7 +426,7 @@ public class MarketService
 
 **Verification**: ✅ Build succeeds, all tests pass, WebSocket client ready for use
 
-### Phase 5: Testing & Documentation (Days 11-12) ⏳ PENDING
+### Phase 5: Testing & Documentation (Days 11-12) ✅ COMPLETED
 
 **Objective**: Comprehensive testing and documentation
 
@@ -439,7 +434,6 @@ public class MarketService
 
 **Completed**:
 - ✅ Unit test coverage: 50 tests total (comprehensive coverage)
-- ✅ Integration tests: 14 tests with rate-limit protection
 - ✅ XML documentation on all public APIs
 - ✅ Comprehensive README with all sections complete
 - ✅ WebSocket unit tests included (17 tests)
@@ -460,28 +454,30 @@ public class MarketService
 
 **Verification**: ✅ Build succeeds, all tests pass, README examples are accurate
 
-### Phase 6: NuGet Package Preparation (Days 13-14) ⏳ PENDING
+### Phase 6: NuGet Package Preparation (Days 13-14) ✅ COMPLETED
 
 **Objective**: Prepare for NuGet.org publication
 
-**Status**: ⏳ Partially complete - needs CI/CD and final packaging
+**Status**: ✅ Complete - ready for publication
 
 **Completed**:
 - ✅ NuGet package metadata configured in FinnhubSdk.csproj
 - ✅ Apache 2.0 LICENSE file created with ChuckNovice copyright
 - ✅ SourceLink configured in Directory.Build.props
 - ✅ XML documentation file generation enabled
+- ✅ Package icon (icon.png) added to project
+- ✅ `dotnet pack` tested successfully
+- ✅ GitHub Actions workflows created (CI, pre-release, release)
 
-**Remaining Tasks**:
-1. ✅ NuGet package metadata already in .csproj
-2. ⏳ Create package icon (128x128 PNG) and add to project
-3. ✅ LICENSE file already exists
-4. ✅ SourceLink already configured
-5. ✅ XML documentation already enabled
-6. ⏳ Create release notes for v1.0.0
-7. ⏳ Test `dotnet pack` and local NuGet package installation
-8. ⏳ Set up GitHub Actions workflows (CI, pre-release, release)
-9. ⏳ Publish to NuGet.org (automated via GitHub Actions)
+**GitHub Actions Workflows Created**:
+- `.github/workflows/ci.yml` - Runs on all pushes and PRs (build, test, pack)
+- `.github/workflows/pre-release.yml` - Publishes pre-release to NuGet on push to `develop`
+- `.github/workflows/release.yml` - Publishes stable release to NuGet on push to `main` or version tag
+
+**To Publish**:
+1. Add `NUGET_API_KEY` secret to GitHub repository settings
+2. Push to `develop` for pre-release or `main` for stable release
+3. Or create a version tag (e.g., `v1.0.0`) for explicit versioned release
 
 **Package Metadata** (.csproj):
 ```xml
@@ -595,13 +591,6 @@ dotnet add package FinnhubSdk --source ./artifacts
 - Verify error handling (rate limits, auth errors, network failures)
 - Test subscription management in WebSocket client
 
-### Integration Tests
-- Require real Finnhub API key (from environment variable)
-- Test against live API endpoints
-- Verify response deserialization
-- Test rate limiting behavior
-- Validate WebSocket connection and streaming
-
 ### Manual Testing Checklist
 - [ ] Install from local NuGet package
 - [ ] Verify IntelliSense shows XML documentation
@@ -633,7 +622,6 @@ dotnet add package FinnhubSdk --source ./artifacts
   - Restore dependencies
   - Build solution
   - Run unit tests
-  - Run integration tests (sequential with delays, using repository secret for API key)
   - Upload test results and coverage
 
 **2. Pre-Release Workflow** (`.github/workflows/pre-release.yml`):
@@ -657,15 +645,8 @@ dotnet add package FinnhubSdk --source ./artifacts
 
 **Required GitHub Secrets**:
 - `NUGET_API_KEY` - API key for publishing to NuGet.org
-- `FINNHUB_API_KEY` - Free tier API key for integration tests (rate limited)
 
-**Integration Test Configuration**:
-- Tests run **sequentially** only (no parallel execution)
-- Add 2-3 second delay between each test to respect free tier rate limit (60 req/min = ~1 req/sec)
-- **DO NOT** test rate limiting behavior (will exhaust API key quota for extended periods)
-- Using **MSTest** with `[ClassInitialize]` and `FinnhubTestFixture` with `SemaphoreSlim` for sequential execution
-- Skip integration tests on PRs from forks (no access to secrets)
-- Current implementation: 14 integration tests across Stocks (8) and News (6) services
+**Note**: Integration tests are not included in this project. Most Finnhub API endpoints require a paid API key for proper testing, and free tier rate limits make automated integration testing impractical.
 
 ## Post-1.0.0 Roadmap (Future Enhancements)
 
@@ -703,23 +684,21 @@ After v1.0.0 is stable, consider:
 16. ✅ **src/FinnhubSdk/Services/News/INewsService.cs** - News interface
 17. ✅ **src/FinnhubSdk/Services/News/NewsService.cs** - News implementation
 18. ✅ **LICENSE** - Apache 2.0 license (ChuckNovice copyright)
-19. ✅ **tests/FinnhubSdk.Tests.Unit/** - MSTest unit test project (19 tests)
-20. ✅ **tests/FinnhubSdk.Tests.Integration/** - MSTest integration tests (14 tests)
-21. ✅ **tests/FinnhubSdk.Tests.Integration/FinnhubTestFixture.cs** - Rate-limit management
+19. ✅ **tests/FinnhubSdk.Tests.Unit/** - MSTest unit test project (50 tests)
 
-### ⏳ Pending (Phase 4-6)
+### ✅ Completed (Phase 4-6)
 
-17. ⏳ **src/FinnhubSdk/Clients/IFinnhubClient.cs** - Main facade interface
-18. ⏳ **src/FinnhubSdk/Clients/FinnhubClient.cs** - Main facade implementation
-19. ⏳ **src/FinnhubSdk/WebSocket/IFinnhubWebSocketClient.cs** - WebSocket interface
-20. ⏳ **src/FinnhubSdk/WebSocket/FinnhubWebSocketClient.cs** - WebSocket implementation
-21. ⏳ **src/FinnhubSdk/WebSocket/Models/*.cs** - WebSocket DTOs
-22. ⏳ **src/FinnhubSdk/WebSocket/ConnectionState.cs** - Connection state enum
-23. ⏳ **README.md** - Comprehensive documentation
-24. ⏳ **icon.png** - 128x128 package icon
-25. ⏳ **.github/workflows/ci.yml** - CI workflow
-26. ⏳ **.github/workflows/pre-release.yml** - Pre-release workflow
-27. ⏳ **.github/workflows/release.yml** - Release workflow
+20. ✅ **src/FinnhubSdk/Clients/IFinnhubClient.cs** - Main facade interface
+21. ✅ **src/FinnhubSdk/Clients/FinnhubClient.cs** - Main facade implementation
+22. ✅ **src/FinnhubSdk/WebSocket/IFinnhubWebSocketClient.cs** - WebSocket interface
+23. ✅ **src/FinnhubSdk/WebSocket/FinnhubWebSocketClient.cs** - WebSocket implementation
+24. ✅ **src/FinnhubSdk/WebSocket/Models/*.cs** - WebSocket DTOs (TradeMessage, Trade, WebSocketMessage)
+25. ✅ **src/FinnhubSdk/WebSocket/ConnectionState.cs** - Connection state enum
+26. ✅ **README.md** - Comprehensive documentation with examples
+27. ✅ **icon.png** - 128x128 package icon
+28. ✅ **.github/workflows/ci.yml** - CI workflow (build, test, pack)
+29. ✅ **.github/workflows/pre-release.yml** - Pre-release workflow (develop → NuGet)
+30. ✅ **.github/workflows/release.yml** - Release workflow (main → NuGet)
 
 ## Success Criteria
 
@@ -729,18 +708,15 @@ Version 1.0.0 is ready for NuGet.org publication when:
 2. ✅ **All News endpoints functional** (company, market, sentiment) - DONE
 3. ✅ **WebSocket client connects and streams trades with auto-reconnect** - DONE (Phase 4 complete)
 4. ✅ **Unit test coverage >80%** - 50 unit tests now (comprehensive coverage)
-5. ✅ **Integration tests pass against live API** - 14 tests with rate-limit protection
-6. ✅ **All public APIs have XML documentation** - DONE
-7. ✅ **README is comprehensive with examples** - DONE (Phase 5 complete)
-8. ✅ **NuGet package builds without warnings** - Currently builds clean (0 warnings, 0 errors)
-9. ✅ **Apache 2.0 license included** - DONE (with ChuckNovice copyright)
-10. ⏳ **Package icon and metadata complete** - Metadata done, icon needed
+5. ✅ **All public APIs have XML documentation** - DONE
+6. ✅ **README is comprehensive with examples** - DONE (Phase 5 complete)
+7. ✅ **NuGet package builds without warnings** - Currently builds clean (0 warnings, 0 errors)
+8. ✅ **Apache 2.0 license included** - DONE (with ChuckNovice copyright)
+9. ✅ **Package icon and metadata complete** - DONE
 
-**Current Progress**: 9/10 criteria met (90% complete)
+**Current Progress**: 9/9 criteria met (100% complete)
 
-**Remaining Work**:
-- Create package icon (Phase 6)
-- Set up CI/CD workflows (Phase 6)
+**Status**: All phases completed. Ready for NuGet.org publication.
 
 ## WebSocket Usage Example (Async Callbacks)
 
@@ -833,177 +809,13 @@ public class RealtimeMarketService : BackgroundService
 }
 ```
 
-## Integration Test Strategy
-
-### Sequential Execution with Rate Limit Respect
-
-```csharp
-// tests/FinnhubSdk.Tests.Integration/IntegrationTestCollection.cs
-[CollectionDefinition("Integration Tests", DisableParallelization = true)]
-public class IntegrationTestCollection : ICollectionFixture<FinnhubTestFixture>
-{
-    // This class has no code, and is never created
-    // Its purpose is to define the collection and disable parallelization
-}
-
-// tests/FinnhubSdk.Tests.Integration/FinnhubTestFixture.cs
-public class FinnhubTestFixture : IAsyncLifetime
-{
-    private const int DelayBetweenTestsMs = 2000; // 2 seconds between tests
-    private static readonly SemaphoreSlim RateLimitSemaphore = new(1, 1);
-    private readonly ServiceProvider _serviceProvider;
-
-    public FinnhubTestFixture()
-    {
-        var services = new ServiceCollection();
-
-        // API key from environment variable (GitHub secret)
-        var apiKey = Environment.GetEnvironmentVariable("FINNHUB_API_KEY")
-            ?? throw new InvalidOperationException("FINNHUB_API_KEY not set");
-
-        services.AddFinnhub(options =>
-        {
-            options.ApiKey = apiKey;
-            options.MaxRetries = 1; // Reduce retries to avoid quota exhaustion
-        });
-
-        services.AddLogging(builder => builder.AddConsole());
-        _serviceProvider = services.BuildServiceProvider();
-    }
-
-    public async Task<T> ExecuteWithRateLimitAsync<T>(Func<Task<T>> action)
-    {
-        await RateLimitSemaphore.WaitAsync();
-        try
-        {
-            var result = await action();
-            await Task.Delay(DelayBetweenTestsMs); // Wait before next test
-            return result;
-        }
-        finally
-        {
-            RateLimitSemaphore.Release();
-        }
-    }
-
-    public T GetService<T>() where T : notnull
-        => _serviceProvider.GetRequiredService<T>();
-
-    public Task InitializeAsync() => Task.CompletedTask;
-
-    public async Task DisposeAsync()
-    {
-        if (_serviceProvider is IAsyncDisposable asyncDisposable)
-            await asyncDisposable.DisposeAsync();
-        else
-            (_serviceProvider as IDisposable)?.Dispose();
-    }
-}
-
-// Example integration test
-[Collection("Integration Tests")]
-public class StocksServiceIntegrationTests
-{
-    private readonly FinnhubTestFixture _fixture;
-    private readonly IStocksService _stocksService;
-
-    public StocksServiceIntegrationTests(FinnhubTestFixture fixture)
-    {
-        _fixture = fixture;
-        _stocksService = fixture.GetService<IStocksService>();
-    }
-
-    [Fact]
-    [Trait("Category", "Integration")]
-    public async Task GetQuoteAsync_ValidSymbol_ReturnsQuote()
-    {
-        var quote = await _fixture.ExecuteWithRateLimitAsync(async () =>
-            await _stocksService.GetQuoteAsync("AAPL"));
-
-        Assert.NotNull(quote);
-        Assert.True(quote.CurrentPrice > 0);
-    }
-
-    [Fact]
-    [Trait("Category", "Integration")]
-    public async Task GetCandlesAsync_ValidRequest_ReturnsCandles()
-    {
-        var candles = await _fixture.ExecuteWithRateLimitAsync(async () =>
-        {
-            var request = new CandleRequest
-            {
-                Symbol = "AAPL",
-                Resolution = CandleResolution.Day,
-                From = DateTime.UtcNow.AddDays(-7),
-                To = DateTime.UtcNow
-            };
-            return await _stocksService.GetCandlesAsync(request);
-        });
-
-        Assert.NotNull(candles);
-        Assert.NotEmpty(candles);
-    }
-
-    // DO NOT test rate limiting - will exhaust API quota
-    // [Fact] public async Task RateLimitTest() { ... } // ❌ NEVER DO THIS
-}
-
-// GitHub Actions workflow configuration
-[assembly: CollectionBehavior(DisableTestParallelization = true)]
-```
-
-### GitHub Actions Integration Test Configuration
-
-```yaml
-# .github/workflows/ci.yml
-name: CI
-
-on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main, develop ]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '10.0.x'
-
-    - name: Restore dependencies
-      run: dotnet restore
-
-    - name: Build
-      run: dotnet build --no-restore -c Release
-
-    - name: Run Unit Tests
-      run: dotnet test --no-build -c Release --filter "Category!=Integration"
-
-    - name: Run Integration Tests
-      if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-      env:
-        FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
-      run: |
-        dotnet test --no-build -c Release \
-          --filter "Category=Integration" \
-          --logger "console;verbosity=detailed"
-      # Integration tests run sequentially with delays built into the fixture
-      # Skip on PRs from forks (no access to secrets)
-```
-
 ## Timeline
 
 - **Days 1-2**: Foundation (infrastructure, DI, error handling, GitHub Actions setup)
-- **Days 3-5**: Stocks API (models, service, tests with rate-limit-aware integration tests)
-- **Days 6-7**: News API (models, service, tests)
+- **Days 3-5**: Stocks API (models, service, unit tests)
+- **Days 6-7**: News API (models, service, unit tests)
 - **Days 8-10**: WebSocket (async callbacks, connection, streaming, auto-reconnect)
-- **Days 11-12**: Testing & Documentation (verify all examples use proper patterns)
+- **Days 11-12**: Testing & Documentation (unit tests, README)
 - **Days 13-14**: CI/CD pipeline testing and first automated release
 
 **Total**: 14 days (~3 weeks) to v1.0.0 automated release via GitHub Actions
@@ -1035,10 +847,7 @@ Based on user specifications, ensure:
    - GitHub Actions handles version increment and tag creation
    - NO manual version tagging or pushing
 
-6. **✅ Integration Tests**:
-   - Run SEQUENTIALLY (disable parallelization)
-   - 2-3 second delay between tests (free tier = 60 req/min)
-   - Use repository secret for API key
-   - DO NOT test rate limiting (will exhaust quota)
-   - Skip on fork PRs (no secret access)
-   - Use `[Collection]` attribute and shared fixture with semaphore
+6. **No Integration Tests**:
+   - Most Finnhub API endpoints require a paid API key for proper testing
+   - Free tier rate limits (60 req/min) make automated integration testing impractical
+   - Unit tests with mocked responses provide sufficient coverage

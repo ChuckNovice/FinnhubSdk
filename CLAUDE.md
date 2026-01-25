@@ -8,7 +8,9 @@ FinnhubSdk is a .NET client library for the Finnhub API, providing both REST and
 
 ## Project Status
 
-Project structure created: `src/FinnhubSdk`, `tests/FinnhubSdk.Tests.Unit`, `tests/FinnhubSdk.Tests.Integration`. Uses centralized package management (Directory.Packages.props) and common build properties (Directory.Build.props). SDK implementation in progress.
+Project structure: `src/FinnhubSdk`, `tests/FinnhubSdk.Tests.Unit`. Uses centralized package management (Directory.Packages.props) and common build properties (Directory.Build.props). SDK implementation complete (Phases 1-5 done), CI/CD setup in progress (Phase 6).
+
+**Note**: This project does NOT include integration tests. Most Finnhub API endpoints require a paid API key for proper testing, and free tier rate limits make automated integration testing impractical. Do not add integration tests.
 
 ## Technology Stack
 
