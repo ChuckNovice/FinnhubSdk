@@ -1,0 +1,62 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- NuGet Package Metadata -->
+    <PackageId>FinnhubSdk</PackageId>
+    <!-- Version managed by MinVer/GitVersion in CI/CD -->
+    <Authors>ChuckNovice</Authors>
+    <Company>ChuckNovice</Company>
+    <Product>Finnhub SDK for .NET</Product>
+    <Description>A modern .NET client for Finnhub Stock API with REST and WebSocket support. Access real-time quotes, historical data, company profiles, news, and more.</Description>
+    <PackageTags>finnhub;stocks;api;finance;trading;market-data;websocket;real-time;rest</PackageTags>
+
+    <!-- URLs -->
+    <PackageProjectUrl>https://github.com/ChuckNovice/FinnhubSdk</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/ChuckNovice/FinnhubSdk</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+
+    <!-- License -->
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+
+    <!-- Documentation -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn> <!-- Missing XML comments -->
+
+    <!-- NuGet package settings -->
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <IsPackable>true</IsPackable>
+    <PackageOutputPath>../../artifacts</PackageOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Core Dependencies (versions managed in Directory.Packages.props) -->
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
+    <PackageReference Include="Microsoft.Extensions.Http" />
+    <PackageReference Include="Microsoft.Extensions.Http.Polly" />
+    <PackageReference Include="Microsoft.Extensions.Options" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+    <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Polly" />
+    <PackageReference Include="Polly.Extensions.Http" />
+    <PackageReference Include="System.Text.Json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="FinnhubSdk.Tests.Unit" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" /> <!-- For Moq -->
+  </ItemGroup>
+
+</Project>

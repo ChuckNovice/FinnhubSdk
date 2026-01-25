@@ -1,0 +1,128 @@
+using FinnhubSdk.Clients;
+using FinnhubSdk.Models.Stocks;
+using Microsoft.Extensions.Logging;
+
+namespace FinnhubSdk.Services.Stocks;
+
+/// <summary>
+/// Implementation of <see cref="IStocksService"/> for accessing stock market data
+/// </summary>
+internal sealed class StocksService : IStocksService
+{
+    private readonly FinnhubHttpClient _httpClient;
+    private readonly ILogger<StocksService> _logger;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StocksService"/> class
+    /// </summary>
+    /// <param name="httpClient">HTTP client for API requests</param>
+    /// <param name="logger">Logger instance</param>
+    public StocksService(FinnhubHttpClient httpClient, ILogger<StocksService> logger)
+    {
+        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
+
+    /// <inheritdoc/>
+    public async Task<Quote> GetQuoteAsync(string symbol, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(symbol))
+        {
+            throw new ArgumentException("Symbol cannot be null or whitespace", nameof(symbol));
+        }
+
+        _logger.LogDebug("Getting quote for symbol: {Symbol}", symbol);
+
+        var quote = await _httpClient.GetAsync<Quote>(
+            $"quote?symbol={Uri.EscapeDataString(symbol)}",
+            null,
+            cancellationToken);
+
+        return quote ?? throw new InvalidOperationException($"Failed to retrieve quote for symbol: {symbol}");
+    }
+
+    /// <inheritdoc/>
+    public async Task<IReadOnlyList<Candle>> GetCandlesAsync(CandleRequest request, CancellationToken cancellationToken = default)
+    {
+        if (request == null)
+        {
+            throw new ArgumentNullException(nameof(request));
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Symbol))
+        {
+            throw new ArgumentException("Symbol cannot be null or whitespace", nameof(request));
+        }
+
+        if (request.From >= request.To)
+        {
+            throw new ArgumentException("From date must be before To date", nameof(request));
+        }
+
+        _logger.LogDebug(
+            "Getting candles for symbol: {Symbol}, resolution: {Resolution}, from: {From}, to: {To}",
+            request.Symbol,
+            request.Resolution,
+            request.From,
+            request.To);
+
+        var fromTimestamp = new DateTimeOffset(request.From).ToUnixTimeSeconds();
+        var toTimestamp = new DateTimeOffset(request.To).ToUnixTimeSeconds();
+        var resolution = request.Resolution.ToApiString();
+
+        var response = await _httpClient.GetAsync<CandleResponse>(
+            $"stock/candle?symbol={Uri.EscapeDataString(request.Symbol)}&resolution={resolution}&from={fromTimestamp}&to={toTimestamp}",
+            null,
+            cancellationToken);
+
+        if (response == null)
+        {
+            _logger.LogWarning("No candle data returned for symbol: {Symbol}", request.Symbol);
+            return Array.Empty<Candle>();
+        }
+
+        return response.ToCandles();
+    }
+
+    /// <inheritdoc/>
+    public async Task<CompanyProfile> GetCompanyProfileAsync(string symbol, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(symbol))
+        {
+            throw new ArgumentException("Symbol cannot be null or whitespace", nameof(symbol));
+        }
+
+        _logger.LogDebug("Getting company profile for symbol: {Symbol}", symbol);
+
+        var profile = await _httpClient.GetAsync<CompanyProfile>(
+            $"stock/profile2?symbol={Uri.EscapeDataString(symbol)}",
+            null,
+            cancellationToken);
+
+        return profile ?? throw new InvalidOperationException($"Failed to retrieve company profile for symbol: {symbol}");
+    }
+
+    /// <inheritdoc/>
+    public async Task<IReadOnlyList<StockSymbol>> SearchSymbolsAsync(string query, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            throw new ArgumentException("Query cannot be null or whitespace", nameof(query));
+        }
+
+        _logger.LogDebug("Searching symbols with query: {Query}", query);
+
+        var response = await _httpClient.GetAsync<SymbolSearchResponse>(
+            $"search?q={Uri.EscapeDataString(query)}",
+            null,
+            cancellationToken);
+
+        if (response == null || response.Result.Length == 0)
+        {
+            _logger.LogDebug("No symbols found for query: {Query}", query);
+            return Array.Empty<StockSymbol>();
+        }
+
+        return response.Result;
+    }
+}

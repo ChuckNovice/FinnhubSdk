@@ -1,0 +1,26 @@
+using FinnhubSdk.Services.News;
+using FinnhubSdk.Services.Stocks;
+using FinnhubSdk.WebSocket;
+
+namespace FinnhubSdk.Clients;
+
+/// <summary>
+/// Main client facade for accessing all Finnhub API services
+/// </summary>
+public interface IFinnhubClient
+{
+    /// <summary>
+    /// Gets the stocks service for accessing stock market data
+    /// </summary>
+    IStocksService Stocks { get; }
+
+    /// <summary>
+    /// Gets the news service for accessing market and company news
+    /// </summary>
+    INewsService News { get; }
+
+    /// <summary>
+    /// Gets the WebSocket client for real-time trade streaming
+    /// </summary>
+    IFinnhubWebSocketClient WebSocket { get; }
+}
