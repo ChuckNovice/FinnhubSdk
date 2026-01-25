@@ -11,8 +11,8 @@
     <!-- Source control -->
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <!-- Using embedded PDBs (DebugType=embedded) for SourceLink debugging -->
+    <!-- No separate .snupkg needed since symbols are in the DLL -->
 
     <!-- Deterministic builds -->
     <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
