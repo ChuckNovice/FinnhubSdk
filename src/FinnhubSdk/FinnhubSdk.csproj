@@ -24,6 +24,9 @@
     <!-- License -->
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 
+    <!-- Package Icon -->
+    <PackageIcon>icon.png</PackageIcon>
+
     <!-- Documentation -->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
@@ -38,6 +41,7 @@
   <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
     <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
+    <None Include="..\..\icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
