@@ -205,4 +205,36 @@ internal sealed class StocksService : IStocksService
 
         return response.EarningsCalendar;
     }
+
+    /// <inheritdoc/>
+    public async Task<IReadOnlyList<InsiderSentimentEntry>> GetInsiderSentimentAsync(string symbol, DateTime from, DateTime to, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(symbol))
+        {
+            throw new ArgumentException("Symbol cannot be null or whitespace", nameof(symbol));
+        }
+
+        if (from >= to)
+        {
+            throw new ArgumentException("From date must be before To date", nameof(from));
+        }
+
+        _logger.LogDebug("Getting insider sentiment for symbol: {Symbol}, from: {From}, to: {To}", symbol, from, to);
+
+        var fromDate = from.ToString("yyyy-MM-dd");
+        var toDate = to.ToString("yyyy-MM-dd");
+
+        var response = await _httpClient.GetAsync<InsiderSentimentResponse>(
+            $"stock/insider-sentiment?symbol={Uri.EscapeDataString(symbol)}&from={fromDate}&to={toDate}",
+            null,
+            cancellationToken);
+
+        if (response == null || response.Data.Length == 0)
+        {
+            _logger.LogDebug("No insider sentiment data found for symbol: {Symbol}", symbol);
+            return Array.Empty<InsiderSentimentEntry>();
+        }
+
+        return response.Data;
+    }
 }

@@ -208,4 +208,21 @@ catch (Exception ex)
 }
 Console.WriteLine();
 
+// 11. Insider Sentiment
+Console.WriteLine("11. Getting insider sentiment for AAPL (last 12 months)...");
+try
+{
+    var sentiment = await finnhub.Stocks.GetInsiderSentimentAsync("AAPL", DateTime.UtcNow.AddMonths(-12), DateTime.UtcNow);
+    Console.WriteLine($"   Found {sentiment.Count} months of insider sentiment data");
+    foreach (var entry in sentiment.Take(5))
+    {
+        Console.WriteLine($"   {entry.Year}-{entry.Month:D2}: MSPR={entry.Mspr:F2}, Change={entry.Change:N0}");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"   Error: {ex.Message}");
+}
+Console.WriteLine();
+
 Console.WriteLine("=== Samples Complete ===");
