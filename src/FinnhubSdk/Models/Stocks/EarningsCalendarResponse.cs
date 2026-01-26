@@ -8,5 +8,5 @@ internal sealed class EarningsCalendarResponse
     /// <summary>
     /// List of earnings releases
     /// </summary>
-    public EarningsCalendarEntry[] EarningsCalendar { get; set; } = Array.Empty<EarningsCalendarEntry>();
+    public EarningsCalendarEntry[] EarningsCalendar { get; set; } = [];
 }

@@ -1,3 +1,5 @@
+namespace FinnhubSdk.Extensions;
+
 using FinnhubSdk.Clients;
 using FinnhubSdk.Configuration;
 using FinnhubSdk.Infrastructure.Handlers;
@@ -11,8 +13,6 @@ using FinnhubSdk.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-
-namespace FinnhubSdk.Extensions;
 
 /// <summary>
 /// Extension methods for <see cref="IServiceCollection"/> to register Finnhub SDK services
@@ -29,15 +29,9 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         Action<FinnhubOptions> configureOptions)
     {
-        if (services == null)
-        {
-            throw new ArgumentNullException(nameof(services));
-        }
+        ArgumentNullException.ThrowIfNull(services);
 
-        if (configureOptions == null)
-        {
-            throw new ArgumentNullException(nameof(configureOptions));
-        }
+        ArgumentNullException.ThrowIfNull(configureOptions);
 
         // Configure options with validation
         services.AddOptions<FinnhubOptions>()
@@ -112,21 +106,12 @@ public static class ServiceCollectionExtensions
     /// <returns>Service collection for chaining</returns>
     public static IServiceCollection AddFinnhub(
         this IServiceCollection services,
-        Microsoft.Extensions.Configuration.IConfiguration configuration)
+        IConfiguration configuration)
     {
-        if (services == null)
-        {
-            throw new ArgumentNullException(nameof(services));
-        }
+        ArgumentNullException.ThrowIfNull(services);
 
-        if (configuration == null)
-        {
-            throw new ArgumentNullException(nameof(configuration));
-        }
+        ArgumentNullException.ThrowIfNull(configuration);
 
-        return services.AddFinnhub(options =>
-        {
-            configuration.GetSection(FinnhubOptions.SectionName).Bind(options);
-        });
+        return services.AddFinnhub(options => configuration.GetSection(FinnhubOptions.SectionName).Bind(options));
     }
 }

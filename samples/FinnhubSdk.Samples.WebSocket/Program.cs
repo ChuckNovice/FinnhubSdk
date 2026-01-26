@@ -1,6 +1,5 @@
 using FinnhubSdk.Clients;
 using FinnhubSdk.Extensions;
-using FinnhubSdk.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -13,10 +12,7 @@ var apiKey = Environment.GetEnvironmentVariable("FINNHUB_API_KEY")
     ?? throw new InvalidOperationException(
         "API key not found. Set FINNHUB_API_KEY environment variable or configure in appsettings.json");
 
-builder.Services.AddFinnhub(options =>
-{
-    options.ApiKey = apiKey;
-});
+builder.Services.AddFinnhub(options => options.ApiKey = apiKey);
 
 var host = builder.Build();
 

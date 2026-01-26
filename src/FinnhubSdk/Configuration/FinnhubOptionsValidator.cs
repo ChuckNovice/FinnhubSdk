@@ -1,6 +1,6 @@
-using Microsoft.Extensions.Options;
-
 namespace FinnhubSdk.Configuration;
+
+using Microsoft.Extensions.Options;
 
 /// <summary>
 /// Validator for <see cref="FinnhubOptions"/>
@@ -32,7 +32,7 @@ internal class FinnhubOptionsValidator : IValidateOptions<FinnhubOptions>
             return ValidateOptionsResult.Fail("Timeout must be between 1 second and 5 minutes");
         }
 
-        if (options.MaxRetries < 0 || options.MaxRetries > 10)
+        if (options.MaxRetries is < 0 or > 10)
         {
             return ValidateOptionsResult.Fail("Max retries must be between 0 and 10");
         }

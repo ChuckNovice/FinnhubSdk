@@ -1,10 +1,10 @@
+namespace FinnhubSdk.Tests.Unit.Services;
+
 using FinnhubSdk.Clients;
 using FinnhubSdk.Models.Stocks;
 using FinnhubSdk.Services.Stocks;
 using Microsoft.Extensions.Logging;
 using Moq;
-
-namespace FinnhubSdk.Tests.Unit.Services;
 
 [TestClass]
 public class StocksServiceTests

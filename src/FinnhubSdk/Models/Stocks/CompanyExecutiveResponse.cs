@@ -13,5 +13,5 @@ internal sealed class CompanyExecutiveResponse
     /// <summary>
     /// List of company executives
     /// </summary>
-    public CompanyExecutive[] Executive { get; set; } = Array.Empty<CompanyExecutive>();
+    public CompanyExecutive[] Executive { get; set; } = [];
 }

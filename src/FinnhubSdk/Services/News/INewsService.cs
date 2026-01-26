@@ -1,6 +1,6 @@
-using FinnhubSdk.Models.News;
-
 namespace FinnhubSdk.Services.News;
+
+using FinnhubSdk.Models.News;
 
 /// <summary>
 /// Service for accessing news data from Finnhub API

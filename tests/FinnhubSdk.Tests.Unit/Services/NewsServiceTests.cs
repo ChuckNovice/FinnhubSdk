@@ -1,10 +1,10 @@
+namespace FinnhubSdk.Tests.Unit.Services;
+
 using FinnhubSdk.Clients;
 using FinnhubSdk.Models.News;
 using FinnhubSdk.Services.News;
 using Microsoft.Extensions.Logging;
 using Moq;
-
-namespace FinnhubSdk.Tests.Unit.Services;
 
 [TestClass]
 public class NewsServiceTests
@@ -19,7 +19,7 @@ public class NewsServiceTests
         _mockHttpClient = new Mock<FinnhubHttpClient>(
             MockBehavior.Strict,
             Mock.Of<HttpClient>(),
-            Mock.Of<Microsoft.Extensions.Options.IOptions<FinnhubSdk.Configuration.FinnhubOptions>>(),
+            Mock.Of<Microsoft.Extensions.Options.IOptions<Configuration.FinnhubOptions>>(),
             Mock.Of<ILogger<FinnhubHttpClient>>());
 
         _mockLogger = new Mock<ILogger<NewsService>>();
@@ -75,23 +75,23 @@ public class NewsServiceTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
     public async Task GetCompanyNewsAsync_NullSymbol_ThrowsArgumentException()
     {
-        // Act
-        await _service.GetCompanyNewsAsync(null!, DateTime.UtcNow.AddDays(-7), DateTime.UtcNow);
+        await Assert.ThrowsExceptionAsync<ArgumentException>(async () =>
+                // Act
+                await _service.GetCompanyNewsAsync(null!, DateTime.UtcNow.AddDays(-7), DateTime.UtcNow));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
     public async Task GetCompanyNewsAsync_FromAfterTo_ThrowsArgumentException()
     {
         // Arrange
         var from = DateTime.UtcNow;
         var to = DateTime.UtcNow.AddDays(-7);
+        await Assert.ThrowsExceptionAsync<ArgumentException>(async () =>
 
-        // Act
-        await _service.GetCompanyNewsAsync("AAPL", from, to);
+                // Act
+                await _service.GetCompanyNewsAsync("AAPL", from, to));
     }
 
     [TestMethod]
@@ -130,11 +130,11 @@ public class NewsServiceTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
     public async Task GetMarketNewsAsync_NullCategory_ThrowsArgumentException()
     {
-        // Act
-        await _service.GetMarketNewsAsync(null!);
+        await Assert.ThrowsExceptionAsync<ArgumentException>(async () =>
+                // Act
+                await _service.GetMarketNewsAsync(null!));
     }
 
     [TestMethod]
@@ -181,10 +181,10 @@ public class NewsServiceTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
     public async Task GetNewsSentimentAsync_NullSymbol_ThrowsArgumentException()
     {
-        // Act
-        await _service.GetNewsSentimentAsync(null!);
+        await Assert.ThrowsExceptionAsync<ArgumentException>(async () =>
+                // Act
+                await _service.GetNewsSentimentAsync(null!));
     }
 }

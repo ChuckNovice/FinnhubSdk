@@ -13,5 +13,5 @@ internal sealed class InsiderTransactionResponse
     /// <summary>
     /// Gets or sets the insider transactions.
     /// </summary>
-    public InsiderTransaction[] Data { get; set; } = Array.Empty<InsiderTransaction>();
+    public InsiderTransaction[] Data { get; set; } = [];
 }

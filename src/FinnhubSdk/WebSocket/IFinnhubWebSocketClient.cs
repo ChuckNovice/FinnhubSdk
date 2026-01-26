@@ -1,6 +1,6 @@
-using FinnhubSdk.WebSocket.Models;
-
 namespace FinnhubSdk.WebSocket;
+
+using FinnhubSdk.WebSocket.Models;
 
 /// <summary>
 /// WebSocket client for real-time trade streaming from Finnhub

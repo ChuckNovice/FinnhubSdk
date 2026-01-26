@@ -13,5 +13,5 @@ internal sealed class InsiderSentimentResponse
     /// <summary>
     /// Gets or sets the insider sentiment data entries.
     /// </summary>
-    public InsiderSentimentEntry[] Data { get; set; } = Array.Empty<InsiderSentimentEntry>();
+    public InsiderSentimentEntry[] Data { get; set; } = [];
 }

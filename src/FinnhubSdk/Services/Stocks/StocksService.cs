@@ -1,27 +1,21 @@
+namespace FinnhubSdk.Services.Stocks;
+
 using FinnhubSdk.Clients;
 using FinnhubSdk.Models.Stocks;
 using Microsoft.Extensions.Logging;
 
-namespace FinnhubSdk.Services.Stocks;
-
 /// <summary>
 /// Implementation of <see cref="IStocksService"/> for accessing stock market data
 /// </summary>
-internal sealed class StocksService : IStocksService
+/// <remarks>
+/// Initializes a new instance of the <see cref="StocksService"/> class
+/// </remarks>
+/// <param name="httpClient">HTTP client for API requests</param>
+/// <param name="logger">Logger instance</param>
+internal sealed class StocksService(FinnhubHttpClient httpClient, ILogger<StocksService> logger) : IStocksService
 {
-    private readonly FinnhubHttpClient _httpClient;
-    private readonly ILogger<StocksService> _logger;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="StocksService"/> class
-    /// </summary>
-    /// <param name="httpClient">HTTP client for API requests</param>
-    /// <param name="logger">Logger instance</param>
-    public StocksService(FinnhubHttpClient httpClient, ILogger<StocksService> logger)
-    {
-        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly FinnhubHttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    private readonly ILogger<StocksService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     /// <inheritdoc/>
     public async Task<Quote> GetQuoteAsync(string symbol, CancellationToken cancellationToken = default)
@@ -44,10 +38,7 @@ internal sealed class StocksService : IStocksService
     /// <inheritdoc/>
     public async Task<IReadOnlyList<Candle>> GetCandlesAsync(CandleRequest request, CancellationToken cancellationToken = default)
     {
-        if (request == null)
-        {
-            throw new ArgumentNullException(nameof(request));
-        }
+        ArgumentNullException.ThrowIfNull(request);
 
         if (string.IsNullOrWhiteSpace(request.Symbol))
         {
@@ -78,7 +69,7 @@ internal sealed class StocksService : IStocksService
         if (response == null)
         {
             _logger.LogWarning("No candle data returned for symbol: {Symbol}", request.Symbol);
-            return Array.Empty<Candle>();
+            return [];
         }
 
         return response.ToCandles();
@@ -120,7 +111,7 @@ internal sealed class StocksService : IStocksService
         if (response == null || response.Result.Length == 0)
         {
             _logger.LogDebug("No symbols found for query: {Query}", query);
-            return Array.Empty<StockSymbol>();
+            return [];
         }
 
         return response.Result;
@@ -167,7 +158,7 @@ internal sealed class StocksService : IStocksService
         if (response == null || response.Executive.Length == 0)
         {
             _logger.LogDebug("No executives found for symbol: {Symbol}", symbol);
-            return Array.Empty<CompanyExecutive>();
+            return [];
         }
 
         return response.Executive;
@@ -200,7 +191,7 @@ internal sealed class StocksService : IStocksService
         if (response == null || response.EarningsCalendar.Length == 0)
         {
             _logger.LogDebug("No earnings calendar entries found for the specified criteria");
-            return Array.Empty<EarningsCalendarEntry>();
+            return [];
         }
 
         return response.EarningsCalendar;
@@ -232,7 +223,7 @@ internal sealed class StocksService : IStocksService
         if (response == null || response.Data.Length == 0)
         {
             _logger.LogDebug("No insider sentiment data found for symbol: {Symbol}", symbol);
-            return Array.Empty<InsiderSentimentEntry>();
+            return [];
         }
 
         return response.Data;
@@ -256,7 +247,7 @@ internal sealed class StocksService : IStocksService
         if (response == null || response.Length == 0)
         {
             _logger.LogDebug("No peers found for symbol: {Symbol}", symbol);
-            return Array.Empty<string>();
+            return [];
         }
 
         return response;
@@ -280,7 +271,7 @@ internal sealed class StocksService : IStocksService
         if (response == null || response.Data.Length == 0)
         {
             _logger.LogDebug("No insider transactions found for symbol: {Symbol}", symbol);
-            return Array.Empty<InsiderTransaction>();
+            return [];
         }
 
         return response.Data;
@@ -304,7 +295,7 @@ internal sealed class StocksService : IStocksService
         if (response == null || response.Length == 0)
         {
             _logger.LogDebug("No SEC filings found for symbol: {Symbol}", symbol);
-            return Array.Empty<SecFiling>();
+            return [];
         }
 
         return response;

@@ -1,35 +1,26 @@
+namespace FinnhubSdk.Infrastructure.Handlers;
+
 using System.Net;
 using FinnhubSdk.Configuration;
 using FinnhubSdk.Exceptions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace FinnhubSdk.Infrastructure.Handlers;
-
 /// <summary>
 /// HTTP message handler that manages rate limiting for Finnhub API requests
 /// </summary>
-internal class RateLimitHandler : DelegatingHandler
+/// <remarks>
+/// Initializes a new instance of the <see cref="RateLimitHandler"/> class
+/// </remarks>
+/// <param name="options">Finnhub configuration options</param>
+/// <param name="logger">Logger instance</param>
+internal class RateLimitHandler(
+    IOptions<FinnhubOptions> options,
+    ILogger<RateLimitHandler> logger) : DelegatingHandler
 {
-    private readonly SemaphoreSlim _rateLimiter;
-    private readonly FinnhubOptions _options;
-    private readonly ILogger<RateLimitHandler> _logger;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="RateLimitHandler"/> class
-    /// </summary>
-    /// <param name="options">Finnhub configuration options</param>
-    /// <param name="logger">Logger instance</param>
-    public RateLimitHandler(
-        IOptions<FinnhubOptions> options,
-        ILogger<RateLimitHandler> logger)
-    {
-        _options = options.Value;
-        _logger = logger;
-
-        // Token bucket for rate limiting (60 requests per minute for free tier)
-        _rateLimiter = new SemaphoreSlim(60, 60);
-    }
+    private readonly SemaphoreSlim _rateLimiter = new(60, 60);
+    private readonly FinnhubOptions _options = options.Value;
+    private readonly ILogger<RateLimitHandler> _logger = logger;
 
     /// <inheritdoc/>
     protected override async Task<HttpResponseMessage> SendAsync(

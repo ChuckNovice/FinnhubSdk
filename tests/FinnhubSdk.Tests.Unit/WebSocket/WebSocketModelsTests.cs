@@ -1,7 +1,7 @@
+namespace FinnhubSdk.Tests.Unit.WebSocket;
+
 using System.Text.Json;
 using FinnhubSdk.WebSocket.Models;
-
-namespace FinnhubSdk.Tests.Unit.WebSocket;
 
 [TestClass]
 public class WebSocketModelsTests

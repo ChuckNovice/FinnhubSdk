@@ -13,5 +13,5 @@ internal sealed class SymbolSearchResponse
     /// <summary>
     /// List of matching symbols
     /// </summary>
-    public StockSymbol[] Result { get; set; } = Array.Empty<StockSymbol>();
+    public StockSymbol[] Result { get; set; } = [];
 }

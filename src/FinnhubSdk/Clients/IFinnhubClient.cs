@@ -1,11 +1,11 @@
+namespace FinnhubSdk.Clients;
+
 using FinnhubSdk.Services.Crypto;
 using FinnhubSdk.Services.Economic;
 using FinnhubSdk.Services.Forex;
 using FinnhubSdk.Services.News;
 using FinnhubSdk.Services.Stocks;
 using FinnhubSdk.WebSocket;
-
-namespace FinnhubSdk.Clients;
 
 /// <summary>
 /// Main client facade for accessing all Finnhub API services
