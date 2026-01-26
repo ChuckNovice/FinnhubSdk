@@ -1,8 +1,8 @@
+namespace FinnhubSdk.Infrastructure.Policies;
+
 using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Extensions.Http;
-
-namespace FinnhubSdk.Infrastructure.Policies;
 
 /// <summary>
 /// Polly resilience policies for Finnhub API requests
@@ -29,15 +29,12 @@ internal static class FinnhubPolicies
             .WaitAndRetryAsync(
                 maxRetries,
                 retryAttempt => TimeSpan.FromMilliseconds(delay.TotalMilliseconds * Math.Pow(2, retryAttempt - 1)),
-                onRetry: (outcome, timespan, retryCount, context) =>
-                {
-                    logger?.LogWarning(
+                onRetry: (outcome, timespan, retryCount, context) => logger?.LogWarning(
                         "Request failed with {StatusCode}. Waiting {Delay}ms before retry {Retry}/{MaxRetries}",
                         outcome.Result?.StatusCode,
                         timespan.TotalMilliseconds,
                         retryCount,
-                        maxRetries);
-                });
+                        maxRetries));
     }
 
     /// <summary>
@@ -57,21 +54,12 @@ internal static class FinnhubPolicies
             .CircuitBreakerAsync(
                 exceptionsBeforeBreaking,
                 TimeSpan.FromSeconds(durationOfBreakSeconds),
-                onBreak: (outcome, duration) =>
-                {
-                    logger?.LogWarning(
+                onBreak: (outcome, duration) => logger?.LogWarning(
                         "Circuit breaker opened for {Duration}s after {Exceptions} consecutive failures",
                         duration.TotalSeconds,
-                        exceptionsBeforeBreaking);
-                },
-                onReset: () =>
-                {
-                    logger?.LogInformation("Circuit breaker reset");
-                },
-                onHalfOpen: () =>
-                {
-                    logger?.LogInformation("Circuit breaker half-open, testing if service recovered");
-                });
+                        exceptionsBeforeBreaking),
+                onReset: () => logger?.LogInformation("Circuit breaker reset"),
+                onHalfOpen: () => logger?.LogInformation("Circuit breaker half-open, testing if service recovered"));
     }
 
     /// <summary>

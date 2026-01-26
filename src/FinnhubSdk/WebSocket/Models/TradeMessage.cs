@@ -1,6 +1,6 @@
-using System.Text.Json.Serialization;
-
 namespace FinnhubSdk.WebSocket.Models;
+
+using System.Text.Json.Serialization;
 
 /// <summary>
 /// Represents a trade message received from the Finnhub WebSocket
@@ -17,5 +17,5 @@ public sealed class TradeMessage
     /// List of trades in this message
     /// </summary>
     [JsonPropertyName("data")]
-    public Trade[] Data { get; set; } = Array.Empty<Trade>();
+    public Trade[] Data { get; set; } = [];
 }

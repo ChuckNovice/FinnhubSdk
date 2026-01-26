@@ -1,6 +1,6 @@
-using System.Text.Json.Serialization;
-
 namespace FinnhubSdk.WebSocket.Models;
+
+using System.Text.Json.Serialization;
 
 /// <summary>
 /// Represents a single trade from the real-time WebSocket feed

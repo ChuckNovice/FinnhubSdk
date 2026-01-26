@@ -1,3 +1,5 @@
+namespace FinnhubSdk.Tests.Unit.WebSocket;
+
 using FinnhubSdk.Configuration;
 using FinnhubSdk.Exceptions;
 using FinnhubSdk.WebSocket;
@@ -5,8 +7,6 @@ using FinnhubSdk.WebSocket.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
-
-namespace FinnhubSdk.Tests.Unit.WebSocket;
 
 [TestClass]
 public class FinnhubWebSocketClientTests
@@ -43,19 +43,19 @@ public class FinnhubWebSocketClientTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void Constructor_NullOptions_ThrowsArgumentNullException()
     {
-        // Act
-        _ = new FinnhubWebSocketClient(null!, _mockLogger.Object);
+        Assert.ThrowsException<ArgumentNullException>(() =>
+                // Act
+                _ = new FinnhubWebSocketClient(null!, _mockLogger.Object));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void Constructor_NullLogger_ThrowsArgumentNullException()
     {
-        // Act
-        _ = new FinnhubWebSocketClient(_mockOptions.Object, null!);
+        Assert.ThrowsException<ArgumentNullException>(() =>
+                // Act
+                _ = new FinnhubWebSocketClient(_mockOptions.Object, null!));
     }
 
     [TestMethod]
@@ -83,7 +83,7 @@ public class FinnhubWebSocketClientTests
     {
         // Arrange
         await using var client = new FinnhubWebSocketClient(_mockOptions.Object, _mockLogger.Object);
-        Func<TradeMessage, Task> callback = _ => Task.CompletedTask;
+        static Task callback(TradeMessage _) => Task.CompletedTask;
 
         // Act
         client.OnTradeReceived = callback;
@@ -97,7 +97,7 @@ public class FinnhubWebSocketClientTests
     {
         // Arrange
         await using var client = new FinnhubWebSocketClient(_mockOptions.Object, _mockLogger.Object);
-        Func<ConnectionState, Task> callback = _ => Task.CompletedTask;
+        static Task callback(ConnectionState _) => Task.CompletedTask;
 
         // Act
         client.OnConnectionStateChanged = callback;
@@ -111,7 +111,7 @@ public class FinnhubWebSocketClientTests
     {
         // Arrange
         await using var client = new FinnhubWebSocketClient(_mockOptions.Object, _mockLogger.Object);
-        Func<Exception, Task> callback = _ => Task.CompletedTask;
+        static Task callback(Exception _) => Task.CompletedTask;
 
         // Act
         client.OnErrorOccurred = callback;
@@ -121,36 +121,36 @@ public class FinnhubWebSocketClientTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(FinnhubWebSocketException))]
     public async Task SubscribeAsync_NotConnected_ThrowsException()
     {
         // Arrange
         await using var client = new FinnhubWebSocketClient(_mockOptions.Object, _mockLogger.Object);
+        await Assert.ThrowsExceptionAsync<FinnhubWebSocketException>(async () =>
 
-        // Act - Should throw because not connected
-        await client.SubscribeAsync("AAPL");
+                // Act - Should throw because not connected
+                await client.SubscribeAsync("AAPL"));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
     public async Task SubscribeAsync_NullSymbol_ThrowsArgumentException()
     {
         // Arrange
         await using var client = new FinnhubWebSocketClient(_mockOptions.Object, _mockLogger.Object);
+        await Assert.ThrowsExceptionAsync<ArgumentException>(async () =>
 
-        // Act - Cast to string to avoid ambiguity
-        await client.SubscribeAsync((string)null!);
+                // Act - Cast to string to avoid ambiguity
+                await client.SubscribeAsync((string)null!));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
     public async Task SubscribeAsync_EmptySymbol_ThrowsArgumentException()
     {
         // Arrange
         await using var client = new FinnhubWebSocketClient(_mockOptions.Object, _mockLogger.Object);
+        await Assert.ThrowsExceptionAsync<ArgumentException>(async () =>
 
-        // Act
-        await client.SubscribeAsync(string.Empty);
+                // Act
+                await client.SubscribeAsync(string.Empty));
     }
 
     [TestMethod]
@@ -167,14 +167,14 @@ public class FinnhubWebSocketClientTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
     public async Task UnsubscribeAsync_NullSymbol_ThrowsArgumentException()
     {
         // Arrange
         await using var client = new FinnhubWebSocketClient(_mockOptions.Object, _mockLogger.Object);
+        await Assert.ThrowsExceptionAsync<ArgumentException>(async () =>
 
-        // Act
-        await client.UnsubscribeAsync(null!);
+                // Act
+                await client.UnsubscribeAsync(null!));
     }
 
     [TestMethod]
@@ -204,26 +204,26 @@ public class FinnhubWebSocketClientTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ObjectDisposedException))]
     public async Task ConnectAsync_DisposedClient_ThrowsObjectDisposedException()
     {
         // Arrange
         var client = new FinnhubWebSocketClient(_mockOptions.Object, _mockLogger.Object);
         await client.DisposeAsync();
+        await Assert.ThrowsExceptionAsync<ObjectDisposedException>(async () =>
 
-        // Act
-        await client.ConnectAsync();
+                // Act
+                await client.ConnectAsync());
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ObjectDisposedException))]
     public async Task SubscribeAsync_DisposedClient_ThrowsObjectDisposedException()
     {
         // Arrange
         var client = new FinnhubWebSocketClient(_mockOptions.Object, _mockLogger.Object);
         await client.DisposeAsync();
+        await Assert.ThrowsExceptionAsync<ObjectDisposedException>(async () =>
 
-        // Act
-        await client.SubscribeAsync("AAPL");
+                // Act
+                await client.SubscribeAsync("AAPL"));
     }
 }

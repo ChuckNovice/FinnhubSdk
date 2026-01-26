@@ -1,6 +1,6 @@
-using FinnhubSdk.Models.Stocks;
-
 namespace FinnhubSdk.Services.Crypto;
+
+using FinnhubSdk.Models.Stocks;
 
 /// <summary>
 /// Service for accessing cryptocurrency market data from Finnhub API

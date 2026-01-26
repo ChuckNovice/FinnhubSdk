@@ -1,6 +1,6 @@
-using System.Net;
-
 namespace FinnhubSdk.Exceptions;
+
+using System.Net;
 
 /// <summary>
 /// Base exception for all Finnhub SDK errors

@@ -1,6 +1,6 @@
-using FinnhubSdk.Models.Economic;
-
 namespace FinnhubSdk.Services.Economic;
+
+using FinnhubSdk.Models.Economic;
 
 /// <summary>
 /// Service interface for accessing economic data from Finnhub API

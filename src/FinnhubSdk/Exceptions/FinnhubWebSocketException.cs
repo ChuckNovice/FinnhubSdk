@@ -1,6 +1,6 @@
-using System.Net.WebSockets;
-
 namespace FinnhubSdk.Exceptions;
+
+using System.Net.WebSockets;
 
 /// <summary>
 /// Exception thrown when WebSocket operations fail

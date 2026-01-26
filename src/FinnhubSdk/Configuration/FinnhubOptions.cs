@@ -1,6 +1,6 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace FinnhubSdk.Configuration;
+
+using System.ComponentModel.DataAnnotations;
 
 /// <summary>
 /// Configuration options for the Finnhub SDK

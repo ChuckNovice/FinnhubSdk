@@ -1,27 +1,21 @@
+namespace FinnhubSdk.Services.News;
+
 using FinnhubSdk.Clients;
 using FinnhubSdk.Models.News;
 using Microsoft.Extensions.Logging;
 
-namespace FinnhubSdk.Services.News;
-
 /// <summary>
 /// Implementation of <see cref="INewsService"/> for accessing news data
 /// </summary>
-internal sealed class NewsService : INewsService
+/// <remarks>
+/// Initializes a new instance of the <see cref="NewsService"/> class
+/// </remarks>
+/// <param name="httpClient">HTTP client for API requests</param>
+/// <param name="logger">Logger instance</param>
+internal sealed class NewsService(FinnhubHttpClient httpClient, ILogger<NewsService> logger) : INewsService
 {
-    private readonly FinnhubHttpClient _httpClient;
-    private readonly ILogger<NewsService> _logger;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="NewsService"/> class
-    /// </summary>
-    /// <param name="httpClient">HTTP client for API requests</param>
-    /// <param name="logger">Logger instance</param>
-    public NewsService(FinnhubHttpClient httpClient, ILogger<NewsService> logger)
-    {
-        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly FinnhubHttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    private readonly ILogger<NewsService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     /// <inheritdoc/>
     public async Task<IReadOnlyList<NewsArticle>> GetCompanyNewsAsync(
@@ -54,7 +48,7 @@ internal sealed class NewsService : INewsService
             null,
             cancellationToken);
 
-        return articles ?? Array.Empty<NewsArticle>();
+        return articles ?? [];
     }
 
     /// <inheritdoc/>
@@ -74,7 +68,7 @@ internal sealed class NewsService : INewsService
             null,
             cancellationToken);
 
-        return articles ?? Array.Empty<NewsArticle>();
+        return articles ?? [];
     }
 
     /// <inheritdoc/>

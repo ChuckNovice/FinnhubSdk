@@ -1,11 +1,11 @@
+namespace FinnhubSdk.Clients;
+
 using System.Net;
 using System.Text.Json;
 using FinnhubSdk.Configuration;
 using FinnhubSdk.Exceptions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-
-namespace FinnhubSdk.Clients;
 
 /// <summary>
 /// Base HTTP client for making requests to the Finnhub API
@@ -97,16 +97,10 @@ internal class FinnhubHttpClient
 
         try
         {
-            var result = JsonSerializer.Deserialize<T>(content, _jsonOptions);
-
-            if (result == null)
-            {
-                throw new FinnhubApiException(
+            var result = JsonSerializer.Deserialize<T>(content, _jsonOptions) ?? throw new FinnhubApiException(
                     "API returned null response",
                     response.StatusCode,
                     content);
-            }
-
             return result;
         }
         catch (JsonException ex)

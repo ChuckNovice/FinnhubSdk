@@ -1,3 +1,5 @@
+namespace FinnhubSdk.Tests.Unit.Clients;
+
 using FinnhubSdk.Clients;
 using FinnhubSdk.Services.Crypto;
 using FinnhubSdk.Services.Economic;
@@ -6,8 +8,6 @@ using FinnhubSdk.Services.News;
 using FinnhubSdk.Services.Stocks;
 using FinnhubSdk.WebSocket;
 using Moq;
-
-namespace FinnhubSdk.Tests.Unit.Clients;
 
 [TestClass]
 public class FinnhubClientTests
@@ -53,87 +53,87 @@ public class FinnhubClientTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void Constructor_NullStocksService_ThrowsArgumentNullException()
     {
-        // Act
-        _ = new FinnhubClient(
+        Assert.ThrowsException<ArgumentNullException>(() =>
+                // Act
+                _ = new FinnhubClient(
             null!,
             _mockNewsService.Object,
             _mockForexService.Object,
             _mockCryptoService.Object,
             _mockEconomicService.Object,
-            _mockWebSocketClient.Object);
+            _mockWebSocketClient.Object));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void Constructor_NullNewsService_ThrowsArgumentNullException()
     {
-        // Act
-        _ = new FinnhubClient(
+        Assert.ThrowsException<ArgumentNullException>(() =>
+                // Act
+                _ = new FinnhubClient(
             _mockStocksService.Object,
             null!,
             _mockForexService.Object,
             _mockCryptoService.Object,
             _mockEconomicService.Object,
-            _mockWebSocketClient.Object);
+            _mockWebSocketClient.Object));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void Constructor_NullForexService_ThrowsArgumentNullException()
     {
-        // Act
-        _ = new FinnhubClient(
+        Assert.ThrowsException<ArgumentNullException>(() =>
+                // Act
+                _ = new FinnhubClient(
             _mockStocksService.Object,
             _mockNewsService.Object,
             null!,
             _mockCryptoService.Object,
             _mockEconomicService.Object,
-            _mockWebSocketClient.Object);
+            _mockWebSocketClient.Object));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void Constructor_NullCryptoService_ThrowsArgumentNullException()
     {
-        // Act
-        _ = new FinnhubClient(
+        Assert.ThrowsException<ArgumentNullException>(() =>
+                // Act
+                _ = new FinnhubClient(
             _mockStocksService.Object,
             _mockNewsService.Object,
             _mockForexService.Object,
             null!,
             _mockEconomicService.Object,
-            _mockWebSocketClient.Object);
+            _mockWebSocketClient.Object));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void Constructor_NullEconomicService_ThrowsArgumentNullException()
     {
-        // Act
-        _ = new FinnhubClient(
+        Assert.ThrowsException<ArgumentNullException>(() =>
+                // Act
+                _ = new FinnhubClient(
             _mockStocksService.Object,
             _mockNewsService.Object,
             _mockForexService.Object,
             _mockCryptoService.Object,
             null!,
-            _mockWebSocketClient.Object);
+            _mockWebSocketClient.Object));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void Constructor_NullWebSocketClient_ThrowsArgumentNullException()
     {
-        // Act
-        _ = new FinnhubClient(
+        Assert.ThrowsException<ArgumentNullException>(() =>
+                // Act
+                _ = new FinnhubClient(
             _mockStocksService.Object,
             _mockNewsService.Object,
             _mockForexService.Object,
             _mockCryptoService.Object,
             _mockEconomicService.Object,
-            null!);
+            null!));
     }
 
     [TestMethod]

@@ -1,6 +1,6 @@
-using FinnhubSdk.Models.Stocks;
-
 namespace FinnhubSdk.Services.Forex;
+
+using FinnhubSdk.Models.Stocks;
 
 /// <summary>
 /// Service for accessing forex market data from Finnhub API

@@ -1,27 +1,21 @@
+namespace FinnhubSdk.Services.Economic;
+
 using FinnhubSdk.Clients;
 using FinnhubSdk.Models.Economic;
 using Microsoft.Extensions.Logging;
 
-namespace FinnhubSdk.Services.Economic;
-
 /// <summary>
 /// Implementation of <see cref="IEconomicService"/> for accessing economic data
 /// </summary>
-internal sealed class EconomicService : IEconomicService
+/// <remarks>
+/// Initializes a new instance of the <see cref="EconomicService"/> class
+/// </remarks>
+/// <param name="httpClient">HTTP client for API requests</param>
+/// <param name="logger">Logger instance</param>
+internal sealed class EconomicService(FinnhubHttpClient httpClient, ILogger<EconomicService> logger) : IEconomicService
 {
-    private readonly FinnhubHttpClient _httpClient;
-    private readonly ILogger<EconomicService> _logger;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="EconomicService"/> class
-    /// </summary>
-    /// <param name="httpClient">HTTP client for API requests</param>
-    /// <param name="logger">Logger instance</param>
-    public EconomicService(FinnhubHttpClient httpClient, ILogger<EconomicService> logger)
-    {
-        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly FinnhubHttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    private readonly ILogger<EconomicService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     /// <inheritdoc/>
     public async Task<EconomicData?> GetEconomicDataAsync(string code, CancellationToken cancellationToken = default)

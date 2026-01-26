@@ -1,6 +1,6 @@
-using System.Text.Json.Serialization;
-
 namespace FinnhubSdk.Models.Stocks;
+
+using System.Text.Json.Serialization;
 
 /// <summary>
 /// Real-time stock quote data

@@ -1,6 +1,6 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace FinnhubSdk.Models.Stocks;
+
+using System.ComponentModel.DataAnnotations;
 
 /// <summary>
 /// Request parameters for retrieving candle (OHLCV) data

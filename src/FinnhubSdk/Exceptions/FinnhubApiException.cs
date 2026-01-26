@@ -1,6 +1,6 @@
-using System.Net;
-
 namespace FinnhubSdk.Exceptions;
+
+using System.Net;
 
 /// <summary>
 /// Exception thrown when the Finnhub API returns an error response

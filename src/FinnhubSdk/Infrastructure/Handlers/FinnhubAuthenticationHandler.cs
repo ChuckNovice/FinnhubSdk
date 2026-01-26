@@ -1,23 +1,18 @@
+namespace FinnhubSdk.Infrastructure.Handlers;
+
 using FinnhubSdk.Configuration;
 using Microsoft.Extensions.Options;
-
-namespace FinnhubSdk.Infrastructure.Handlers;
 
 /// <summary>
 /// HTTP message handler that adds Finnhub API authentication to requests
 /// </summary>
-internal class FinnhubAuthenticationHandler : DelegatingHandler
+/// <remarks>
+/// Initializes a new instance of the <see cref="FinnhubAuthenticationHandler"/> class
+/// </remarks>
+/// <param name="options">Finnhub configuration options</param>
+internal class FinnhubAuthenticationHandler(IOptions<FinnhubOptions> options) : DelegatingHandler
 {
-    private readonly FinnhubOptions _options;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="FinnhubAuthenticationHandler"/> class
-    /// </summary>
-    /// <param name="options">Finnhub configuration options</param>
-    public FinnhubAuthenticationHandler(IOptions<FinnhubOptions> options)
-    {
-        _options = options.Value;
-    }
+    private readonly FinnhubOptions _options = options.Value;
 
     /// <inheritdoc/>
     protected override async Task<HttpResponseMessage> SendAsync(

@@ -1,6 +1,6 @@
-using System.Text.Json.Serialization;
-
 namespace FinnhubSdk.Models.Stocks;
+
+using System.Text.Json.Serialization;
 
 /// <summary>
 /// Internal response model for candle data from Finnhub API
@@ -12,37 +12,37 @@ internal sealed class CandleResponse
     /// List of close prices
     /// </summary>
     [JsonPropertyName("c")]
-    public decimal[] Close { get; set; } = Array.Empty<decimal>();
+    public decimal[] Close { get; set; } = [];
 
     /// <summary>
     /// List of high prices
     /// </summary>
     [JsonPropertyName("h")]
-    public decimal[] High { get; set; } = Array.Empty<decimal>();
+    public decimal[] High { get; set; } = [];
 
     /// <summary>
     /// List of low prices
     /// </summary>
     [JsonPropertyName("l")]
-    public decimal[] Low { get; set; } = Array.Empty<decimal>();
+    public decimal[] Low { get; set; } = [];
 
     /// <summary>
     /// List of open prices
     /// </summary>
     [JsonPropertyName("o")]
-    public decimal[] Open { get; set; } = Array.Empty<decimal>();
+    public decimal[] Open { get; set; } = [];
 
     /// <summary>
     /// List of volumes
     /// </summary>
     [JsonPropertyName("v")]
-    public long[] Volume { get; set; } = Array.Empty<long>();
+    public long[] Volume { get; set; } = [];
 
     /// <summary>
     /// List of Unix timestamps
     /// </summary>
     [JsonPropertyName("t")]
-    public long[] Timestamp { get; set; } = Array.Empty<long>();
+    public long[] Timestamp { get; set; } = [];
 
     /// <summary>
     /// Status of the request (ok or no_data)
@@ -58,7 +58,7 @@ internal sealed class CandleResponse
     {
         if (Status != "ok" || Close.Length == 0)
         {
-            return Array.Empty<Candle>();
+            return [];
         }
 
         var candles = new List<Candle>(Close.Length);

@@ -1,3 +1,5 @@
+namespace FinnhubSdk.WebSocket;
+
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
@@ -6,8 +8,6 @@ using FinnhubSdk.Exceptions;
 using FinnhubSdk.WebSocket.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-
-namespace FinnhubSdk.WebSocket;
 
 /// <summary>
 /// WebSocket client for real-time trade streaming from Finnhub with auto-reconnect
@@ -19,7 +19,7 @@ internal sealed class FinnhubWebSocketClient : IFinnhubWebSocketClient
     private readonly SemaphoreSlim _connectionLock = new(1, 1);
     private readonly SemaphoreSlim _sendLock = new(1, 1);
     private readonly HashSet<string> _subscribedSymbols = new(StringComparer.OrdinalIgnoreCase);
-    private readonly object _symbolsLock = new();
+    private readonly Lock _symbolsLock = new();
     private readonly JsonSerializerOptions _jsonOptions;
 
     private ClientWebSocket? _webSocket;
@@ -30,14 +30,14 @@ internal sealed class FinnhubWebSocketClient : IFinnhubWebSocketClient
     private bool _disposed;
 
     private const int MaxReconnectAttempts = 5;
-    private static readonly TimeSpan[] ReconnectDelays = new[]
-    {
+    private static readonly TimeSpan[] ReconnectDelays =
+    [
         TimeSpan.FromSeconds(2),
         TimeSpan.FromSeconds(4),
         TimeSpan.FromSeconds(8),
         TimeSpan.FromSeconds(16),
         TimeSpan.FromSeconds(32)
-    };
+    ];
 
     /// <inheritdoc/>
     public ConnectionState State => _state;
@@ -88,7 +88,7 @@ internal sealed class FinnhubWebSocketClient : IFinnhubWebSocketClient
         await _connectionLock.WaitAsync(cancellationToken);
         try
         {
-            if (_state == ConnectionState.Connected || _state == ConnectionState.Connecting)
+            if (_state is ConnectionState.Connected or ConnectionState.Connecting)
             {
                 _logger.LogDebug("WebSocket already connected or connecting, skipping");
                 return;
@@ -194,7 +194,7 @@ internal sealed class FinnhubWebSocketClient : IFinnhubWebSocketClient
         string[] symbolsToUnsubscribe;
         lock (_symbolsLock)
         {
-            symbolsToUnsubscribe = _subscribedSymbols.ToArray();
+            symbolsToUnsubscribe = [.. _subscribedSymbols];
         }
 
         foreach (var symbol in symbolsToUnsubscribe)
@@ -450,7 +450,7 @@ internal sealed class FinnhubWebSocketClient : IFinnhubWebSocketClient
         string[] symbolsToResubscribe;
         lock (_symbolsLock)
         {
-            symbolsToResubscribe = _subscribedSymbols.ToArray();
+            symbolsToResubscribe = [.. _subscribedSymbols];
         }
 
         if (symbolsToResubscribe.Length == 0)
