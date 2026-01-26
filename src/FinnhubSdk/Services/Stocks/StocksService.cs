@@ -125,4 +125,188 @@ internal sealed class StocksService : IStocksService
 
         return response.Result;
     }
+
+    /// <inheritdoc/>
+    public async Task<BasicFinancials> GetBasicFinancialsAsync(string symbol, string metric = "all", CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(symbol))
+        {
+            throw new ArgumentException("Symbol cannot be null or whitespace", nameof(symbol));
+        }
+
+        if (string.IsNullOrWhiteSpace(metric))
+        {
+            throw new ArgumentException("Metric cannot be null or whitespace", nameof(metric));
+        }
+
+        _logger.LogDebug("Getting basic financials for symbol: {Symbol}, metric: {Metric}", symbol, metric);
+
+        var financials = await _httpClient.GetAsync<BasicFinancials>(
+            $"stock/metric?symbol={Uri.EscapeDataString(symbol)}&metric={Uri.EscapeDataString(metric)}",
+            null,
+            cancellationToken);
+
+        return financials ?? throw new InvalidOperationException($"Failed to retrieve basic financials for symbol: {symbol}");
+    }
+
+    /// <inheritdoc/>
+    public async Task<IReadOnlyList<CompanyExecutive>> GetCompanyExecutivesAsync(string symbol, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(symbol))
+        {
+            throw new ArgumentException("Symbol cannot be null or whitespace", nameof(symbol));
+        }
+
+        _logger.LogDebug("Getting company executives for symbol: {Symbol}", symbol);
+
+        var response = await _httpClient.GetAsync<CompanyExecutiveResponse>(
+            $"stock/executive?symbol={Uri.EscapeDataString(symbol)}",
+            null,
+            cancellationToken);
+
+        if (response == null || response.Executive.Length == 0)
+        {
+            _logger.LogDebug("No executives found for symbol: {Symbol}", symbol);
+            return Array.Empty<CompanyExecutive>();
+        }
+
+        return response.Executive;
+    }
+
+    /// <inheritdoc/>
+    public async Task<IReadOnlyList<EarningsCalendarEntry>> GetEarningsCalendarAsync(DateTime from, DateTime to, string? symbol = null, CancellationToken cancellationToken = default)
+    {
+        if (from >= to)
+        {
+            throw new ArgumentException("From date must be before To date", nameof(from));
+        }
+
+        _logger.LogDebug("Getting earnings calendar from: {From}, to: {To}, symbol: {Symbol}", from, to, symbol);
+
+        var fromDate = from.ToString("yyyy-MM-dd");
+        var toDate = to.ToString("yyyy-MM-dd");
+        var url = $"calendar/earnings?from={fromDate}&to={toDate}";
+
+        if (!string.IsNullOrWhiteSpace(symbol))
+        {
+            url += $"&symbol={Uri.EscapeDataString(symbol)}";
+        }
+
+        var response = await _httpClient.GetAsync<EarningsCalendarResponse>(
+            url,
+            null,
+            cancellationToken);
+
+        if (response == null || response.EarningsCalendar.Length == 0)
+        {
+            _logger.LogDebug("No earnings calendar entries found for the specified criteria");
+            return Array.Empty<EarningsCalendarEntry>();
+        }
+
+        return response.EarningsCalendar;
+    }
+
+    /// <inheritdoc/>
+    public async Task<IReadOnlyList<InsiderSentimentEntry>> GetInsiderSentimentAsync(string symbol, DateTime from, DateTime to, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(symbol))
+        {
+            throw new ArgumentException("Symbol cannot be null or whitespace", nameof(symbol));
+        }
+
+        if (from >= to)
+        {
+            throw new ArgumentException("From date must be before To date", nameof(from));
+        }
+
+        _logger.LogDebug("Getting insider sentiment for symbol: {Symbol}, from: {From}, to: {To}", symbol, from, to);
+
+        var fromDate = from.ToString("yyyy-MM-dd");
+        var toDate = to.ToString("yyyy-MM-dd");
+
+        var response = await _httpClient.GetAsync<InsiderSentimentResponse>(
+            $"stock/insider-sentiment?symbol={Uri.EscapeDataString(symbol)}&from={fromDate}&to={toDate}",
+            null,
+            cancellationToken);
+
+        if (response == null || response.Data.Length == 0)
+        {
+            _logger.LogDebug("No insider sentiment data found for symbol: {Symbol}", symbol);
+            return Array.Empty<InsiderSentimentEntry>();
+        }
+
+        return response.Data;
+    }
+
+    /// <inheritdoc/>
+    public async Task<IReadOnlyList<string>> GetCompanyPeersAsync(string symbol, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(symbol))
+        {
+            throw new ArgumentException("Symbol cannot be null or whitespace", nameof(symbol));
+        }
+
+        _logger.LogDebug("Getting company peers for symbol: {Symbol}", symbol);
+
+        var response = await _httpClient.GetAsync<string[]>(
+            $"stock/peers?symbol={Uri.EscapeDataString(symbol)}",
+            null,
+            cancellationToken);
+
+        if (response == null || response.Length == 0)
+        {
+            _logger.LogDebug("No peers found for symbol: {Symbol}", symbol);
+            return Array.Empty<string>();
+        }
+
+        return response;
+    }
+
+    /// <inheritdoc/>
+    public async Task<IReadOnlyList<InsiderTransaction>> GetInsiderTransactionsAsync(string symbol, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(symbol))
+        {
+            throw new ArgumentException("Symbol cannot be null or whitespace", nameof(symbol));
+        }
+
+        _logger.LogDebug("Getting insider transactions for symbol: {Symbol}", symbol);
+
+        var response = await _httpClient.GetAsync<InsiderTransactionResponse>(
+            $"stock/insider-transactions?symbol={Uri.EscapeDataString(symbol)}",
+            null,
+            cancellationToken);
+
+        if (response == null || response.Data.Length == 0)
+        {
+            _logger.LogDebug("No insider transactions found for symbol: {Symbol}", symbol);
+            return Array.Empty<InsiderTransaction>();
+        }
+
+        return response.Data;
+    }
+
+    /// <inheritdoc/>
+    public async Task<IReadOnlyList<SecFiling>> GetSecFilingsAsync(string symbol, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(symbol))
+        {
+            throw new ArgumentException("Symbol cannot be null or whitespace", nameof(symbol));
+        }
+
+        _logger.LogDebug("Getting SEC filings for symbol: {Symbol}", symbol);
+
+        var response = await _httpClient.GetAsync<SecFiling[]>(
+            $"stock/filings?symbol={Uri.EscapeDataString(symbol)}",
+            null,
+            cancellationToken);
+
+        if (response == null || response.Length == 0)
+        {
+            _logger.LogDebug("No SEC filings found for symbol: {Symbol}", symbol);
+            return Array.Empty<SecFiling>();
+        }
+
+        return response;
+    }
 }

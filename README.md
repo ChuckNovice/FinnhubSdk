@@ -7,8 +7,11 @@ A modern .NET client for the [Finnhub Stock API](https://finnhub.io/) with REST 
 
 ## Features
 
-- **Stock Market Data** - Real-time quotes, historical candles (OHLCV), company profiles, symbol search
-- **News** - Company news, market news, sentiment analysis
+- **Stock Market Data** - Real-time quotes, historical candles, company profiles, symbol search, basic financials, executives, peers
+- **Corporate Events** - Earnings calendar, insider sentiment, insider transactions, SEC filings
+- **News & Sentiment** - Company news, market news, sentiment analysis
+- **Forex & Crypto** - Foreign exchange and cryptocurrency candle data
+- **Economic Data** - Macroeconomic indicators and time series data
 - **WebSocket Streaming** - Real-time trade data with auto-reconnect and async callbacks
 - **Modern .NET** - Built for .NET 10.0+ with nullable reference types and async/await
 - **Dependency Injection** - First-class support for Microsoft.Extensions.DependencyInjection
@@ -50,13 +53,127 @@ public class MarketService(IFinnhubClient finnhub)
 }
 ```
 
+## API Coverage
+
+The SDK provides access to Finnhub API endpoints through organized service interfaces:
+
+### IStocksService
+
+| Method | API Endpoint | Description |
+|--------|--------------|-------------|
+| `GetQuoteAsync` | `/quote` | Real-time stock quote |
+| `GetCandlesAsync` | `/stock/candle` | Historical OHLCV candles |
+| `GetCompanyProfileAsync` | `/stock/profile2` | Company profile and details |
+| `SearchSymbolsAsync` | `/search` | Search for stock symbols |
+| `GetBasicFinancialsAsync` | `/stock/metric` | Key financial metrics (P/E, margins, etc.) |
+| `GetCompanyExecutivesAsync` | `/stock/executive` | Company executives and compensation |
+| `GetEarningsCalendarAsync` | `/calendar/earnings` | Upcoming earnings releases |
+| `GetInsiderSentimentAsync` | `/stock/insider-sentiment` | Monthly insider sentiment data |
+| `GetCompanyPeersAsync` | `/stock/peers` | Similar companies |
+| `GetInsiderTransactionsAsync` | `/stock/insider-transactions` | Insider buy/sell transactions |
+| `GetSecFilingsAsync` | `/stock/filings` | SEC filing documents |
+
+### INewsService
+
+| Method | API Endpoint | Description |
+|--------|--------------|-------------|
+| `GetCompanyNewsAsync` | `/company-news` | News articles for a company |
+| `GetMarketNewsAsync` | `/news` | General market news |
+| `GetNewsSentimentAsync` | `/news-sentiment` | News sentiment analysis |
+
+### IForexService
+
+| Method | API Endpoint | Description |
+|--------|--------------|-------------|
+| `GetCandlesAsync` | `/forex/candle` | Forex OHLCV candles |
+
+### ICryptoService
+
+| Method | API Endpoint | Description |
+|--------|--------------|-------------|
+| `GetCandlesAsync` | `/crypto/candle` | Cryptocurrency OHLCV candles |
+
+### IEconomicService
+
+| Method | API Endpoint | Description |
+|--------|--------------|-------------|
+| `GetEconomicDataAsync` | `/economic` | Economic indicator time series |
+| `GetEconomicCodesAsync` | `/economic/code` | Available economic indicator codes |
+
+### WebSocket
+
+| Method | Description |
+|--------|-------------|
+| `SubscribeAsync` | Subscribe to real-time trades |
+| `UnsubscribeAsync` | Unsubscribe from trades |
+| `ConnectAsync` / `DisconnectAsync` | Manage connection |
+
+## Usage Examples
+
+### Stock Data
+
+```csharp
+// Real-time quote
+var quote = await finnhub.Stocks.GetQuoteAsync("AAPL");
+Console.WriteLine($"Price: ${quote.CurrentPrice}, Change: {quote.PercentChange}%");
+
+// Company profile
+var profile = await finnhub.Stocks.GetCompanyProfileAsync("MSFT");
+Console.WriteLine($"{profile.Name} - {profile.Industry}");
+
+// Historical candles
+var candles = await finnhub.Stocks.GetCandlesAsync(new CandleRequest
+{
+    Symbol = "GOOGL",
+    Resolution = CandleResolution.Day,
+    From = DateTime.UtcNow.AddDays(-30),
+    To = DateTime.UtcNow
+});
+
+// Basic financials
+var financials = await finnhub.Stocks.GetBasicFinancialsAsync("AAPL");
+Console.WriteLine($"P/E: {financials.Metric?.PeBasicExclExtraTTM}");
+
+// Earnings calendar
+var earnings = await finnhub.Stocks.GetEarningsCalendarAsync(
+    DateTime.UtcNow,
+    DateTime.UtcNow.AddDays(7));
+
+// Company peers
+var peers = await finnhub.Stocks.GetCompanyPeersAsync("AAPL");
+```
+
+### News
+
+```csharp
+// Company news
+var news = await finnhub.News.GetCompanyNewsAsync("AAPL",
+    DateTime.UtcNow.AddDays(-7),
+    DateTime.UtcNow);
+
+// Market news
+var marketNews = await finnhub.News.GetMarketNewsAsync("general");
+```
+
+### WebSocket Streaming
+
+```csharp
+finnhub.WebSocket.OnTradeReceived += (sender, trade) =>
+{
+    Console.WriteLine($"{trade.Symbol}: ${trade.Price} x {trade.Volume}");
+};
+
+await finnhub.WebSocket.ConnectAsync();
+await finnhub.WebSocket.SubscribeAsync("AAPL", "MSFT", "GOOGL");
+```
+
 ## Samples
 
 Ready-to-run sample applications are available in the [`samples/`](samples/) directory:
 
 | Sample | Description |
 |--------|-------------|
-| [REST API Sample](samples/FinnhubSdk.Samples.Rest) | Stock quotes, candles, company profiles, news, sentiment |
+| [REST API Sample](samples/FinnhubSdk.Samples.Rest) | All 18 REST endpoints: quotes, candles, profiles, news, financials, and more |
 | [WebSocket Sample](samples/FinnhubSdk.Samples.WebSocket) | Real-time trade streaming with callbacks |
 
 ### Running Samples

@@ -38,4 +38,65 @@ public interface IStocksService
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>List of matching stock symbols</returns>
     Task<IReadOnlyList<StockSymbol>> SearchSymbolsAsync(string query, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets basic financial metrics for a company including P/E ratios, margins, and valuation metrics
+    /// </summary>
+    /// <param name="symbol">Stock symbol (e.g., "AAPL", "MSFT")</param>
+    /// <param name="metric">Metric type: "all", "price", or "valuation" (default: "all")</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Basic financial metrics for the company</returns>
+    Task<BasicFinancials> GetBasicFinancialsAsync(string symbol, string metric = "all", CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets information about company executives and board members
+    /// </summary>
+    /// <param name="symbol">Stock symbol (e.g., "AAPL", "MSFT")</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>List of company executives with their titles, compensation, and other details</returns>
+    Task<IReadOnlyList<CompanyExecutive>> GetCompanyExecutivesAsync(string symbol, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets earnings calendar with upcoming and past earnings releases
+    /// </summary>
+    /// <param name="from">Start date for the earnings calendar</param>
+    /// <param name="to">End date for the earnings calendar</param>
+    /// <param name="symbol">Optional stock symbol to filter results (e.g., "AAPL")</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>List of earnings releases within the specified date range</returns>
+    Task<IReadOnlyList<EarningsCalendarEntry>> GetEarningsCalendarAsync(DateTime from, DateTime to, string? symbol = null, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets insider sentiment data showing monthly share purchase ratio (MSPR) for a company
+    /// </summary>
+    /// <param name="symbol">Stock symbol (e.g., "AAPL", "MSFT")</param>
+    /// <param name="from">Start date for the sentiment data</param>
+    /// <param name="to">End date for the sentiment data</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>List of monthly insider sentiment entries with MSPR values</returns>
+    Task<IReadOnlyList<InsiderSentimentEntry>> GetInsiderSentimentAsync(string symbol, DateTime from, DateTime to, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets a list of company peers (similar companies in the same industry/sector)
+    /// </summary>
+    /// <param name="symbol">Stock symbol (e.g., "AAPL", "MSFT")</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>List of peer stock symbols</returns>
+    Task<IReadOnlyList<string>> GetCompanyPeersAsync(string symbol, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets insider transactions (SEC Form 4 filings) for a company
+    /// </summary>
+    /// <param name="symbol">Stock symbol (e.g., "AAPL", "MSFT")</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>List of insider transactions including buys and sells</returns>
+    Task<IReadOnlyList<InsiderTransaction>> GetInsiderTransactionsAsync(string symbol, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets SEC filings for a company (10-K, 10-Q, 8-K, etc.)
+    /// </summary>
+    /// <param name="symbol">Stock symbol (e.g., "AAPL", "MSFT")</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>List of SEC filings with form type, dates, and URLs</returns>
+    Task<IReadOnlyList<SecFiling>> GetSecFilingsAsync(string symbol, CancellationToken cancellationToken = default);
 }

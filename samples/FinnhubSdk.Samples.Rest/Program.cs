@@ -148,4 +148,215 @@ catch (Exception ex)
 }
 Console.WriteLine();
 
+// 8. Basic Financials
+Console.WriteLine("8. Getting basic financials for AAPL...");
+try
+{
+    var financials = await finnhub.Stocks.GetBasicFinancialsAsync("AAPL");
+    Console.WriteLine($"   Symbol: {financials.Symbol}");
+    Console.WriteLine($"   52-Week High: ${financials.Metric?.FiftyTwoWeekHigh:F2}");
+    Console.WriteLine($"   52-Week Low: ${financials.Metric?.FiftyTwoWeekLow:F2}");
+    Console.WriteLine($"   P/E Ratio (TTM): {financials.Metric?.PeBasicExclExtraTTM:F2}");
+    Console.WriteLine($"   Market Cap: ${financials.Metric?.MarketCapitalization:N0}M");
+    Console.WriteLine($"   ROE (TTM): {financials.Metric?.RoeTTM:F2}%");
+    Console.WriteLine($"   Gross Margin (TTM): {financials.Metric?.GrossMarginTTM:F2}%");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"   Error: {ex.Message}");
+}
+Console.WriteLine();
+
+// 9. Company Executives
+Console.WriteLine("9. Getting company executives for AAPL...");
+try
+{
+    var executives = await finnhub.Stocks.GetCompanyExecutivesAsync("AAPL");
+    foreach (var exec in executives.Take(5))
+    {
+        Console.WriteLine($"   {exec.Name} - {exec.Title}");
+        if (exec.Compensation.HasValue && exec.Compensation > 0)
+        {
+            Console.WriteLine($"      Compensation: {exec.Compensation:N0} {exec.Currency}");
+        }
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"   Error: {ex.Message}");
+}
+Console.WriteLine();
+
+// 10. Earnings Calendar
+Console.WriteLine("10. Getting earnings calendar (next 7 days)...");
+try
+{
+    var earnings = await finnhub.Stocks.GetEarningsCalendarAsync(DateTime.UtcNow, DateTime.UtcNow.AddDays(7));
+    Console.WriteLine($"   Found {earnings.Count} upcoming earnings releases");
+    foreach (var entry in earnings.Take(5))
+    {
+        Console.WriteLine($"   {entry.Symbol}: {entry.Date} ({entry.Hour})");
+        if (entry.EpsEstimate.HasValue)
+        {
+            Console.WriteLine($"      EPS Estimate: {entry.EpsEstimate:F2}");
+        }
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"   Error: {ex.Message}");
+}
+Console.WriteLine();
+
+// 11. Insider Sentiment
+Console.WriteLine("11. Getting insider sentiment for AAPL (last 12 months)...");
+try
+{
+    var sentiment = await finnhub.Stocks.GetInsiderSentimentAsync("AAPL", DateTime.UtcNow.AddMonths(-12), DateTime.UtcNow);
+    Console.WriteLine($"   Found {sentiment.Count} months of insider sentiment data");
+    foreach (var entry in sentiment.Take(5))
+    {
+        Console.WriteLine($"   {entry.Year}-{entry.Month:D2}: MSPR={entry.Mspr:F2}, Change={entry.Change:N0}");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"   Error: {ex.Message}");
+}
+Console.WriteLine();
+
+// 12. Company Peers
+Console.WriteLine("12. Getting company peers for AAPL...");
+try
+{
+    var peers = await finnhub.Stocks.GetCompanyPeersAsync("AAPL");
+    Console.WriteLine($"   Found {peers.Count} peers");
+    Console.WriteLine($"   Peers: {string.Join(", ", peers.Take(10))}");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"   Error: {ex.Message}");
+}
+Console.WriteLine();
+
+// 13. Insider Transactions
+Console.WriteLine("13. Getting insider transactions for AAPL...");
+try
+{
+    var transactions = await finnhub.Stocks.GetInsiderTransactionsAsync("AAPL");
+    Console.WriteLine($"   Found {transactions.Count} insider transactions");
+    foreach (var tx in transactions.Take(5))
+    {
+        var direction = tx.Change > 0 ? "BUY" : "SELL";
+        Console.WriteLine($"   {tx.FilingDate}: {tx.Name} - {direction} {Math.Abs(tx.Change):N0} shares @ ${tx.TransactionPrice:F2}");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"   Error: {ex.Message}");
+}
+Console.WriteLine();
+
+// 14. SEC Filings
+Console.WriteLine("14. Getting SEC filings for AAPL...");
+try
+{
+    var filings = await finnhub.Stocks.GetSecFilingsAsync("AAPL");
+    Console.WriteLine($"   Found {filings.Count} SEC filings");
+    foreach (var filing in filings.Take(5))
+    {
+        Console.WriteLine($"   {filing.FiledDate}: {filing.Form} - {filing.ReportUrl}");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"   Error: {ex.Message}");
+}
+Console.WriteLine();
+
+// 15. Forex Candles
+Console.WriteLine("15. Getting forex candles for EUR/USD (last 7 days)...");
+try
+{
+    var forexCandles = await finnhub.Forex.GetCandlesAsync(
+        "OANDA:EUR_USD",
+        CandleResolution.Day,
+        DateTime.UtcNow.AddDays(-7),
+        DateTime.UtcNow);
+    Console.WriteLine($"   Found {forexCandles.Count} forex candles");
+    foreach (var candle in forexCandles.Take(5))
+    {
+        Console.WriteLine($"   {candle.Timestamp:yyyy-MM-dd}: O={candle.Open:F5} H={candle.High:F5} L={candle.Low:F5} C={candle.Close:F5}");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"   Error: {ex.Message}");
+}
+Console.WriteLine();
+
+// 16. Crypto Candles
+Console.WriteLine("16. Getting crypto candles for BTC/USDT (last 7 days)...");
+try
+{
+    var cryptoCandles = await finnhub.Crypto.GetCandlesAsync(
+        "BINANCE:BTCUSDT",
+        CandleResolution.Day,
+        DateTime.UtcNow.AddDays(-7),
+        DateTime.UtcNow);
+    Console.WriteLine($"   Found {cryptoCandles.Count} crypto candles");
+    foreach (var candle in cryptoCandles.Take(5))
+    {
+        Console.WriteLine($"   {candle.Timestamp:yyyy-MM-dd}: O={candle.Open:F2} H={candle.High:F2} L={candle.Low:F2} C={candle.Close:F2}");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"   Error: {ex.Message}");
+}
+Console.WriteLine();
+
+// 17. Economic Data
+Console.WriteLine("17. Getting economic data (US GDP)...");
+try
+{
+    // MA-USA-656880 is the code for US GDP
+    var economicData = await finnhub.Economic.GetEconomicDataAsync("MA-USA-656880");
+    if (economicData != null)
+    {
+        Console.WriteLine($"   Code: {economicData.Code}");
+        Console.WriteLine($"   Found {economicData.Data.Count} data points");
+        foreach (var point in economicData.Data.Take(5))
+        {
+            Console.WriteLine($"   {point.Date}: {point.Value:N2}");
+        }
+    }
+    else
+    {
+        Console.WriteLine("   No data returned");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"   Error: {ex.Message}");
+}
+Console.WriteLine();
+
+// 18. Economic Codes
+Console.WriteLine("18. Getting available economic indicator codes...");
+try
+{
+    var codes = await finnhub.Economic.GetEconomicCodesAsync();
+    Console.WriteLine($"   Found {codes.Count} economic indicator codes");
+    foreach (var code in codes.Take(5))
+    {
+        Console.WriteLine($"   {code.Code}: {code.Name} ({code.Country}, {code.Unit})");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"   Error: {ex.Message}");
+}
+Console.WriteLine();
+
 Console.WriteLine("=== Samples Complete ===");
