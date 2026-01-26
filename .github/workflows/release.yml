@@ -6,8 +6,69 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write  # Required for creating tags and releases
+
 jobs:
+  # Job 1: Create and push tag when merging to main (not on tag push)
+  create-tag:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag_created: ${{ steps.create_tag.outputs.tag_created }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Full history for versioning
+
+    - name: Determine Version
+      id: version
+      run: |
+        # Get the latest tag version or default to 0.0.0
+        LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+        LATEST_VERSION=${LATEST_TAG#v}
+
+        # Parse version components
+        IFS='.' read -r MAJOR MINOR PATCH <<< "$LATEST_VERSION"
+
+        # Increment patch version for automatic releases
+        PATCH=$((PATCH + 1))
+        NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+
+        echo "Latest tag: $LATEST_TAG"
+        echo "New version: $NEW_VERSION"
+        echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+    - name: Check if tag exists
+      id: check_tag
+      run: |
+        VERSION="${{ steps.version.outputs.version }}"
+        if git rev-parse "v$VERSION" >/dev/null 2>&1; then
+          echo "Tag v$VERSION already exists"
+          echo "exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "Tag v$VERSION does not exist"
+          echo "exists=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Create and push tag
+      id: create_tag
+      if: steps.check_tag.outputs.exists == 'false'
+      run: |
+        VERSION="${{ steps.version.outputs.version }}"
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git tag -a "v$VERSION" -m "Release v$VERSION"
+        git push origin "v$VERSION"
+        echo "tag_created=true" >> $GITHUB_OUTPUT
+        echo "Created and pushed tag v$VERSION"
+
+  # Job 2: Build, publish, and create release (runs on tag push)
   publish:
+    if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
 
     steps:
@@ -30,18 +91,11 @@ jobs:
     - name: Run Unit Tests
       run: dotnet test --no-build -c Release
 
-    - name: Determine Version
+    - name: Determine Version from Tag
       id: version
       run: |
-        if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
-          # Use tag version
-          VERSION="${{ github.ref_name }}"
-          VERSION=${VERSION#v}
-        else
-          # Get version from latest tag or default
-          VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "1.0.0")
-          VERSION=${VERSION#v}
-        fi
+        VERSION="${{ github.ref_name }}"
+        VERSION=${VERSION#v}
         echo "version=$VERSION" >> $GITHUB_OUTPUT
         echo "Publishing version: $VERSION"
 
@@ -58,10 +112,11 @@ jobs:
         path: ./artifacts/*.nupkg
 
     - name: Create GitHub Release
-      if: startsWith(github.ref, 'refs/tags/v')
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: ./artifacts/*.nupkg
         generate_release_notes: true
+        name: v${{ steps.version.outputs.version }}
+        tag_name: ${{ github.ref_name }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
