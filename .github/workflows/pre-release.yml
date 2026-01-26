@@ -4,6 +4,9 @@ on:
   push:
     branches: [ develop ]
 
+permissions:
+  contents: write  # Required for creating tags and releases
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -28,17 +31,22 @@ jobs:
     - name: Run Unit Tests
       run: dotnet test --no-build -c Release
 
-    - name: Pack NuGet Package (Pre-release)
+    - name: Determine Pre-release Version
+      id: version
       run: |
         # Get version from git tags or default to 1.0.0
         VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "1.0.0")
         # Strip 'v' prefix if present
         VERSION=${VERSION#v}
-        # Add pre-release suffix with commit count
-        COMMIT_COUNT=$(git rev-list --count HEAD)
-        PRE_VERSION="${VERSION}-beta.${COMMIT_COUNT}"
+        # Add pre-release suffix with short commit SHA for uniqueness
+        SHORT_SHA=$(git rev-parse --short HEAD)
+        PRE_VERSION="${VERSION}-beta.${SHORT_SHA}"
+        echo "version=$PRE_VERSION" >> $GITHUB_OUTPUT
         echo "Publishing version: $PRE_VERSION"
-        dotnet pack src/FinnhubSdk/FinnhubSdk.csproj --no-build -c Release -o ./artifacts -p:PackageVersion=$PRE_VERSION
+
+    - name: Pack NuGet Package (Pre-release)
+      run: |
+        dotnet pack src/FinnhubSdk/FinnhubSdk.csproj --no-build -c Release -o ./artifacts -p:PackageVersion=${{ steps.version.outputs.version }}
 
     - name: Push to NuGet.org
       run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
@@ -48,3 +56,27 @@ jobs:
       with:
         name: nuget-package-prerelease
         path: ./artifacts/*.nupkg
+
+    - name: Create Pre-release Tag
+      run: |
+        VERSION="${{ steps.version.outputs.version }}"
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        # Delete existing tag if it exists (allows re-running)
+        git tag -d "v$VERSION" 2>/dev/null || true
+        git push origin ":refs/tags/v$VERSION" 2>/dev/null || true
+        # Create new tag
+        git tag -a "v$VERSION" -m "Pre-release v$VERSION"
+        git push origin "v$VERSION"
+        echo "Created tag v$VERSION"
+
+    - name: Create GitHub Pre-release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: ./artifacts/*.nupkg
+        generate_release_notes: true
+        name: v${{ steps.version.outputs.version }} (Beta)
+        tag_name: v${{ steps.version.outputs.version }}
+        prerelease: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
