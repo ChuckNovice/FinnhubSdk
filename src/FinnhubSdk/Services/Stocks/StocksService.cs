@@ -125,4 +125,27 @@ internal sealed class StocksService : IStocksService
 
         return response.Result;
     }
+
+    /// <inheritdoc/>
+    public async Task<BasicFinancials> GetBasicFinancialsAsync(string symbol, string metric = "all", CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(symbol))
+        {
+            throw new ArgumentException("Symbol cannot be null or whitespace", nameof(symbol));
+        }
+
+        if (string.IsNullOrWhiteSpace(metric))
+        {
+            throw new ArgumentException("Metric cannot be null or whitespace", nameof(metric));
+        }
+
+        _logger.LogDebug("Getting basic financials for symbol: {Symbol}, metric: {Metric}", symbol, metric);
+
+        var financials = await _httpClient.GetAsync<BasicFinancials>(
+            $"stock/metric?symbol={Uri.EscapeDataString(symbol)}&metric={Uri.EscapeDataString(metric)}",
+            null,
+            cancellationToken);
+
+        return financials ?? throw new InvalidOperationException($"Failed to retrieve basic financials for symbol: {symbol}");
+    }
 }

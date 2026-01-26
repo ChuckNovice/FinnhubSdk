@@ -38,4 +38,13 @@ public interface IStocksService
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>List of matching stock symbols</returns>
     Task<IReadOnlyList<StockSymbol>> SearchSymbolsAsync(string query, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets basic financial metrics for a company including P/E ratios, margins, and valuation metrics
+    /// </summary>
+    /// <param name="symbol">Stock symbol (e.g., "AAPL", "MSFT")</param>
+    /// <param name="metric">Metric type: "all", "price", or "valuation" (default: "all")</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Basic financial metrics for the company</returns>
+    Task<BasicFinancials> GetBasicFinancialsAsync(string symbol, string metric = "all", CancellationToken cancellationToken = default);
 }

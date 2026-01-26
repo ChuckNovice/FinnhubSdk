@@ -148,4 +148,23 @@ catch (Exception ex)
 }
 Console.WriteLine();
 
+// 8. Basic Financials
+Console.WriteLine("8. Getting basic financials for AAPL...");
+try
+{
+    var financials = await finnhub.Stocks.GetBasicFinancialsAsync("AAPL");
+    Console.WriteLine($"   Symbol: {financials.Symbol}");
+    Console.WriteLine($"   52-Week High: ${financials.Metric?.FiftyTwoWeekHigh:F2}");
+    Console.WriteLine($"   52-Week Low: ${financials.Metric?.FiftyTwoWeekLow:F2}");
+    Console.WriteLine($"   P/E Ratio (TTM): {financials.Metric?.PeBasicExclExtraTTM:F2}");
+    Console.WriteLine($"   Market Cap: ${financials.Metric?.MarketCapitalization:N0}M");
+    Console.WriteLine($"   ROE (TTM): {financials.Metric?.RoeTTM:F2}%");
+    Console.WriteLine($"   Gross Margin (TTM): {financials.Metric?.GrossMarginTTM:F2}%");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"   Error: {ex.Message}");
+}
+Console.WriteLine();
+
 Console.WriteLine("=== Samples Complete ===");
