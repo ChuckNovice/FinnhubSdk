@@ -47,4 +47,12 @@ public interface IStocksService
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Basic financial metrics for the company</returns>
     Task<BasicFinancials> GetBasicFinancialsAsync(string symbol, string metric = "all", CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets information about company executives and board members
+    /// </summary>
+    /// <param name="symbol">Stock symbol (e.g., "AAPL", "MSFT")</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>List of company executives with their titles, compensation, and other details</returns>
+    Task<IReadOnlyList<CompanyExecutive>> GetCompanyExecutivesAsync(string symbol, CancellationToken cancellationToken = default);
 }

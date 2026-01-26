@@ -167,4 +167,24 @@ catch (Exception ex)
 }
 Console.WriteLine();
 
+// 9. Company Executives
+Console.WriteLine("9. Getting company executives for AAPL...");
+try
+{
+    var executives = await finnhub.Stocks.GetCompanyExecutivesAsync("AAPL");
+    foreach (var exec in executives.Take(5))
+    {
+        Console.WriteLine($"   {exec.Name} - {exec.Title}");
+        if (exec.Compensation.HasValue && exec.Compensation > 0)
+        {
+            Console.WriteLine($"      Compensation: {exec.Compensation:N0} {exec.Currency}");
+        }
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"   Error: {ex.Message}");
+}
+Console.WriteLine();
+
 Console.WriteLine("=== Samples Complete ===");
