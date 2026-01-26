@@ -172,4 +172,37 @@ internal sealed class StocksService : IStocksService
 
         return response.Executive;
     }
+
+    /// <inheritdoc/>
+    public async Task<IReadOnlyList<EarningsCalendarEntry>> GetEarningsCalendarAsync(DateTime from, DateTime to, string? symbol = null, CancellationToken cancellationToken = default)
+    {
+        if (from >= to)
+        {
+            throw new ArgumentException("From date must be before To date", nameof(from));
+        }
+
+        _logger.LogDebug("Getting earnings calendar from: {From}, to: {To}, symbol: {Symbol}", from, to, symbol);
+
+        var fromDate = from.ToString("yyyy-MM-dd");
+        var toDate = to.ToString("yyyy-MM-dd");
+        var url = $"calendar/earnings?from={fromDate}&to={toDate}";
+
+        if (!string.IsNullOrWhiteSpace(symbol))
+        {
+            url += $"&symbol={Uri.EscapeDataString(symbol)}";
+        }
+
+        var response = await _httpClient.GetAsync<EarningsCalendarResponse>(
+            url,
+            null,
+            cancellationToken);
+
+        if (response == null || response.EarningsCalendar.Length == 0)
+        {
+            _logger.LogDebug("No earnings calendar entries found for the specified criteria");
+            return Array.Empty<EarningsCalendarEntry>();
+        }
+
+        return response.EarningsCalendar;
+    }
 }

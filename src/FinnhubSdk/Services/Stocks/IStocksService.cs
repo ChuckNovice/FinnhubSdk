@@ -55,4 +55,14 @@ public interface IStocksService
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>List of company executives with their titles, compensation, and other details</returns>
     Task<IReadOnlyList<CompanyExecutive>> GetCompanyExecutivesAsync(string symbol, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets earnings calendar with upcoming and past earnings releases
+    /// </summary>
+    /// <param name="from">Start date for the earnings calendar</param>
+    /// <param name="to">End date for the earnings calendar</param>
+    /// <param name="symbol">Optional stock symbol to filter results (e.g., "AAPL")</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>List of earnings releases within the specified date range</returns>
+    Task<IReadOnlyList<EarningsCalendarEntry>> GetEarningsCalendarAsync(DateTime from, DateTime to, string? symbol = null, CancellationToken cancellationToken = default);
 }
