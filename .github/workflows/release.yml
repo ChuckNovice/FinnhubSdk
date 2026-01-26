@@ -24,12 +24,23 @@ jobs:
       with:
         fetch-depth: 0  # Full history for versioning
 
+    - name: Fetch all tags
+      run: git fetch --tags origin
+
     - name: Determine Version
       id: version
       run: |
-        # Get the latest tag version or default to 0.0.0
-        LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
-        LATEST_VERSION=${LATEST_TAG#v}
+        # Get the latest release tag (not pre-release) sorted by version
+        # Filter to only vX.Y.Z tags (no -beta suffix)
+        LATEST_TAG=$(git tag -l 'v[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname | grep -v '-' | head -n1)
+
+        if [ -z "$LATEST_TAG" ]; then
+          LATEST_VERSION="0.0.0"
+          echo "No release tags found, starting from 0.0.0"
+        else
+          LATEST_VERSION=${LATEST_TAG#v}
+          echo "Latest release tag: $LATEST_TAG (version: $LATEST_VERSION)"
+        fi
 
         # Parse version components
         IFS='.' read -r MAJOR MINOR PATCH <<< "$LATEST_VERSION"
@@ -38,7 +49,6 @@ jobs:
         PATCH=$((PATCH + 1))
         NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
 
-        echo "Latest tag: $LATEST_TAG"
         echo "New version: $NEW_VERSION"
         echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
