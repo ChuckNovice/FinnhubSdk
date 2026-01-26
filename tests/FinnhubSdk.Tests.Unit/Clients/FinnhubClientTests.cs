@@ -1,5 +1,6 @@
 using FinnhubSdk.Clients;
 using FinnhubSdk.Services.Crypto;
+using FinnhubSdk.Services.Economic;
 using FinnhubSdk.Services.Forex;
 using FinnhubSdk.Services.News;
 using FinnhubSdk.Services.Stocks;
@@ -15,6 +16,7 @@ public class FinnhubClientTests
     private Mock<INewsService> _mockNewsService = null!;
     private Mock<IForexService> _mockForexService = null!;
     private Mock<ICryptoService> _mockCryptoService = null!;
+    private Mock<IEconomicService> _mockEconomicService = null!;
     private Mock<IFinnhubWebSocketClient> _mockWebSocketClient = null!;
 
     [TestInitialize]
@@ -24,6 +26,7 @@ public class FinnhubClientTests
         _mockNewsService = new Mock<INewsService>();
         _mockForexService = new Mock<IForexService>();
         _mockCryptoService = new Mock<ICryptoService>();
+        _mockEconomicService = new Mock<IEconomicService>();
         _mockWebSocketClient = new Mock<IFinnhubWebSocketClient>();
     }
 
@@ -36,6 +39,7 @@ public class FinnhubClientTests
             _mockNewsService.Object,
             _mockForexService.Object,
             _mockCryptoService.Object,
+            _mockEconomicService.Object,
             _mockWebSocketClient.Object);
 
         // Assert
@@ -44,6 +48,7 @@ public class FinnhubClientTests
         Assert.AreSame(_mockNewsService.Object, client.News);
         Assert.AreSame(_mockForexService.Object, client.Forex);
         Assert.AreSame(_mockCryptoService.Object, client.Crypto);
+        Assert.AreSame(_mockEconomicService.Object, client.Economic);
         Assert.AreSame(_mockWebSocketClient.Object, client.WebSocket);
     }
 
@@ -57,6 +62,7 @@ public class FinnhubClientTests
             _mockNewsService.Object,
             _mockForexService.Object,
             _mockCryptoService.Object,
+            _mockEconomicService.Object,
             _mockWebSocketClient.Object);
     }
 
@@ -70,6 +76,7 @@ public class FinnhubClientTests
             null!,
             _mockForexService.Object,
             _mockCryptoService.Object,
+            _mockEconomicService.Object,
             _mockWebSocketClient.Object);
     }
 
@@ -83,6 +90,7 @@ public class FinnhubClientTests
             _mockNewsService.Object,
             null!,
             _mockCryptoService.Object,
+            _mockEconomicService.Object,
             _mockWebSocketClient.Object);
     }
 
@@ -95,6 +103,21 @@ public class FinnhubClientTests
             _mockStocksService.Object,
             _mockNewsService.Object,
             _mockForexService.Object,
+            null!,
+            _mockEconomicService.Object,
+            _mockWebSocketClient.Object);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentNullException))]
+    public void Constructor_NullEconomicService_ThrowsArgumentNullException()
+    {
+        // Act
+        _ = new FinnhubClient(
+            _mockStocksService.Object,
+            _mockNewsService.Object,
+            _mockForexService.Object,
+            _mockCryptoService.Object,
             null!,
             _mockWebSocketClient.Object);
     }
@@ -109,6 +132,7 @@ public class FinnhubClientTests
             _mockNewsService.Object,
             _mockForexService.Object,
             _mockCryptoService.Object,
+            _mockEconomicService.Object,
             null!);
     }
 
@@ -121,6 +145,7 @@ public class FinnhubClientTests
             _mockNewsService.Object,
             _mockForexService.Object,
             _mockCryptoService.Object,
+            _mockEconomicService.Object,
             _mockWebSocketClient.Object);
 
         // Act & Assert
@@ -136,6 +161,7 @@ public class FinnhubClientTests
             _mockNewsService.Object,
             _mockForexService.Object,
             _mockCryptoService.Object,
+            _mockEconomicService.Object,
             _mockWebSocketClient.Object);
 
         // Act & Assert
@@ -151,6 +177,7 @@ public class FinnhubClientTests
             _mockNewsService.Object,
             _mockForexService.Object,
             _mockCryptoService.Object,
+            _mockEconomicService.Object,
             _mockWebSocketClient.Object);
 
         // Act & Assert
@@ -166,10 +193,27 @@ public class FinnhubClientTests
             _mockNewsService.Object,
             _mockForexService.Object,
             _mockCryptoService.Object,
+            _mockEconomicService.Object,
             _mockWebSocketClient.Object);
 
         // Act & Assert
         Assert.AreSame(_mockCryptoService.Object, client.Crypto);
+    }
+
+    [TestMethod]
+    public void Economic_ReturnsInjectedService()
+    {
+        // Arrange
+        var client = new FinnhubClient(
+            _mockStocksService.Object,
+            _mockNewsService.Object,
+            _mockForexService.Object,
+            _mockCryptoService.Object,
+            _mockEconomicService.Object,
+            _mockWebSocketClient.Object);
+
+        // Act & Assert
+        Assert.AreSame(_mockEconomicService.Object, client.Economic);
     }
 
     [TestMethod]
@@ -181,6 +225,7 @@ public class FinnhubClientTests
             _mockNewsService.Object,
             _mockForexService.Object,
             _mockCryptoService.Object,
+            _mockEconomicService.Object,
             _mockWebSocketClient.Object);
 
         // Act & Assert

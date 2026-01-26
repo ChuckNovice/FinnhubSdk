@@ -3,6 +3,7 @@ using FinnhubSdk.Configuration;
 using FinnhubSdk.Infrastructure.Handlers;
 using FinnhubSdk.Infrastructure.Policies;
 using FinnhubSdk.Services.Crypto;
+using FinnhubSdk.Services.Economic;
 using FinnhubSdk.Services.Forex;
 using FinnhubSdk.Services.News;
 using FinnhubSdk.Services.Stocks;
@@ -92,6 +93,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<INewsService, NewsService>();
         services.AddScoped<IForexService, ForexService>();
         services.AddScoped<ICryptoService, CryptoService>();
+        services.AddScoped<IEconomicService, EconomicService>();
 
         // Register WebSocket client as singleton (maintains connection across requests)
         services.AddSingleton<IFinnhubWebSocketClient, FinnhubWebSocketClient>();
