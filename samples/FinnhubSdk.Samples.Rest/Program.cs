@@ -295,4 +295,25 @@ catch (Exception ex)
 }
 Console.WriteLine();
 
+// 16. Crypto Candles
+Console.WriteLine("16. Getting crypto candles for BTC/USDT (last 7 days)...");
+try
+{
+    var cryptoCandles = await finnhub.Crypto.GetCandlesAsync(
+        "BINANCE:BTCUSDT",
+        CandleResolution.Day,
+        DateTime.UtcNow.AddDays(-7),
+        DateTime.UtcNow);
+    Console.WriteLine($"   Found {cryptoCandles.Count} crypto candles");
+    foreach (var candle in cryptoCandles.Take(5))
+    {
+        Console.WriteLine($"   {candle.Timestamp:yyyy-MM-dd}: O={candle.Open:F2} H={candle.High:F2} L={candle.Low:F2} C={candle.Close:F2}");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"   Error: {ex.Message}");
+}
+Console.WriteLine();
+
 Console.WriteLine("=== Samples Complete ===");
