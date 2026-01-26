@@ -285,4 +285,28 @@ internal sealed class StocksService : IStocksService
 
         return response.Data;
     }
+
+    /// <inheritdoc/>
+    public async Task<IReadOnlyList<SecFiling>> GetSecFilingsAsync(string symbol, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(symbol))
+        {
+            throw new ArgumentException("Symbol cannot be null or whitespace", nameof(symbol));
+        }
+
+        _logger.LogDebug("Getting SEC filings for symbol: {Symbol}", symbol);
+
+        var response = await _httpClient.GetAsync<SecFiling[]>(
+            $"stock/filings?symbol={Uri.EscapeDataString(symbol)}",
+            null,
+            cancellationToken);
+
+        if (response == null || response.Length == 0)
+        {
+            _logger.LogDebug("No SEC filings found for symbol: {Symbol}", symbol);
+            return Array.Empty<SecFiling>();
+        }
+
+        return response;
+    }
 }

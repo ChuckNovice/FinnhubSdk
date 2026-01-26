@@ -257,4 +257,21 @@ catch (Exception ex)
 }
 Console.WriteLine();
 
+// 14. SEC Filings
+Console.WriteLine("14. Getting SEC filings for AAPL...");
+try
+{
+    var filings = await finnhub.Stocks.GetSecFilingsAsync("AAPL");
+    Console.WriteLine($"   Found {filings.Count} SEC filings");
+    foreach (var filing in filings.Take(5))
+    {
+        Console.WriteLine($"   {filing.FiledDate}: {filing.Form} - {filing.ReportUrl}");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"   Error: {ex.Message}");
+}
+Console.WriteLine();
+
 Console.WriteLine("=== Samples Complete ===");
