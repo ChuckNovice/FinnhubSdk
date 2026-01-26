@@ -76,9 +76,11 @@ jobs:
         echo "tag_created=true" >> $GITHUB_OUTPUT
         echo "Created and pushed tag v$VERSION"
 
-  # Job 2: Build, publish, and create release (runs on tag push)
+  # Job 2: Build, publish, and create release
+  # Runs after create-tag on main push, OR directly on manual tag push
   publish:
-    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [create-tag]
+    if: always() && (needs.create-tag.outputs.tag_created == 'true' || startsWith(github.ref, 'refs/tags/v'))
     runs-on: ubuntu-latest
 
     steps:
@@ -101,10 +103,16 @@ jobs:
     - name: Run Unit Tests
       run: dotnet test --no-build -c Release
 
-    - name: Determine Version from Tag
+    - name: Determine Version
       id: version
       run: |
-        VERSION="${{ github.ref_name }}"
+        if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+          # Direct tag push - use tag name
+          VERSION="${{ github.ref_name }}"
+        else
+          # Main branch push - use version from create-tag job
+          VERSION="v${{ needs.create-tag.outputs.version }}"
+        fi
         VERSION=${VERSION#v}
         echo "version=$VERSION" >> $GITHUB_OUTPUT
         echo "Publishing version: $VERSION"
@@ -127,6 +135,6 @@ jobs:
         files: ./artifacts/*.nupkg
         generate_release_notes: true
         name: v${{ steps.version.outputs.version }}
-        tag_name: ${{ github.ref_name }}
+        tag_name: v${{ steps.version.outputs.version }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
