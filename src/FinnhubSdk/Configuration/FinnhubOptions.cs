@@ -36,10 +36,10 @@ public class FinnhubOptions
     public AuthenticationMethod AuthMethod { get; set; } = AuthenticationMethod.Header;
 
     /// <summary>
-    /// Gets or sets the request timeout
+    /// Gets or sets the request timeout.
+    /// Must be between 1 second and 5 minutes.
     /// </summary>
-    [Range(1, 300)]
-    public int TimeoutSeconds { get; set; } = 30;
+    public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(30);
 
     /// <summary>
     /// Gets or sets the maximum number of retry attempts
@@ -48,10 +48,10 @@ public class FinnhubOptions
     public int MaxRetries { get; set; } = 3;
 
     /// <summary>
-    /// Gets or sets the initial delay between retry attempts
+    /// Gets or sets the initial delay between retry attempts.
+    /// Must be between 100 milliseconds and 1 minute.
     /// </summary>
-    [Range(100, 60000)]
-    public int RetryDelayMilliseconds { get; set; } = 1000;
+    public TimeSpan RetryDelay { get; set; } = TimeSpan.FromSeconds(1);
 
     /// <summary>
     /// Gets or sets whether to enable detailed logging

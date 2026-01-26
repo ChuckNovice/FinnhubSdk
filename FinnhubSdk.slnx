@@ -5,4 +5,8 @@
   <Folder Name="/tests/">
     <Project Path="tests/FinnhubSdk.Tests.Unit/FinnhubSdk.Tests.Unit.csproj" />
   </Folder>
+  <Folder Name="/samples/">
+    <Project Path="samples/FinnhubSdk.Samples.Rest/FinnhubSdk.Samples.Rest.csproj" />
+    <Project Path="samples/FinnhubSdk.Samples.WebSocket/FinnhubSdk.Samples.WebSocket.csproj" />
+  </Folder>
 </Solution>
