@@ -237,4 +237,28 @@ internal sealed class StocksService : IStocksService
 
         return response.Data;
     }
+
+    /// <inheritdoc/>
+    public async Task<IReadOnlyList<string>> GetCompanyPeersAsync(string symbol, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(symbol))
+        {
+            throw new ArgumentException("Symbol cannot be null or whitespace", nameof(symbol));
+        }
+
+        _logger.LogDebug("Getting company peers for symbol: {Symbol}", symbol);
+
+        var response = await _httpClient.GetAsync<string[]>(
+            $"stock/peers?symbol={Uri.EscapeDataString(symbol)}",
+            null,
+            cancellationToken);
+
+        if (response == null || response.Length == 0)
+        {
+            _logger.LogDebug("No peers found for symbol: {Symbol}", symbol);
+            return Array.Empty<string>();
+        }
+
+        return response;
+    }
 }

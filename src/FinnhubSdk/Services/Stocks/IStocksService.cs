@@ -75,4 +75,12 @@ public interface IStocksService
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>List of monthly insider sentiment entries with MSPR values</returns>
     Task<IReadOnlyList<InsiderSentimentEntry>> GetInsiderSentimentAsync(string symbol, DateTime from, DateTime to, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets a list of company peers (similar companies in the same industry/sector)
+    /// </summary>
+    /// <param name="symbol">Stock symbol (e.g., "AAPL", "MSFT")</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>List of peer stock symbols</returns>
+    Task<IReadOnlyList<string>> GetCompanyPeersAsync(string symbol, CancellationToken cancellationToken = default);
 }

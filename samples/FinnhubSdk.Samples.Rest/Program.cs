@@ -225,4 +225,18 @@ catch (Exception ex)
 }
 Console.WriteLine();
 
+// 12. Company Peers
+Console.WriteLine("12. Getting company peers for AAPL...");
+try
+{
+    var peers = await finnhub.Stocks.GetCompanyPeersAsync("AAPL");
+    Console.WriteLine($"   Found {peers.Count} peers");
+    Console.WriteLine($"   Peers: {string.Join(", ", peers.Take(10))}");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"   Error: {ex.Message}");
+}
+Console.WriteLine();
+
 Console.WriteLine("=== Samples Complete ===");
