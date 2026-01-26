@@ -148,4 +148,28 @@ internal sealed class StocksService : IStocksService
 
         return financials ?? throw new InvalidOperationException($"Failed to retrieve basic financials for symbol: {symbol}");
     }
+
+    /// <inheritdoc/>
+    public async Task<IReadOnlyList<CompanyExecutive>> GetCompanyExecutivesAsync(string symbol, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(symbol))
+        {
+            throw new ArgumentException("Symbol cannot be null or whitespace", nameof(symbol));
+        }
+
+        _logger.LogDebug("Getting company executives for symbol: {Symbol}", symbol);
+
+        var response = await _httpClient.GetAsync<CompanyExecutiveResponse>(
+            $"stock/executive?symbol={Uri.EscapeDataString(symbol)}",
+            null,
+            cancellationToken);
+
+        if (response == null || response.Executive.Length == 0)
+        {
+            _logger.LogDebug("No executives found for symbol: {Symbol}", symbol);
+            return Array.Empty<CompanyExecutive>();
+        }
+
+        return response.Executive;
+    }
 }
