@@ -342,4 +342,21 @@ catch (Exception ex)
 }
 Console.WriteLine();
 
+// 18. Economic Codes
+Console.WriteLine("18. Getting available economic indicator codes...");
+try
+{
+    var codes = await finnhub.Economic.GetEconomicCodesAsync();
+    Console.WriteLine($"   Found {codes.Count} economic indicator codes");
+    foreach (var code in codes.Take(5))
+    {
+        Console.WriteLine($"   {code.Code}: {code.Name} ({code.Country}, {code.Unit})");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"   Error: {ex.Message}");
+}
+Console.WriteLine();
+
 Console.WriteLine("=== Samples Complete ===");

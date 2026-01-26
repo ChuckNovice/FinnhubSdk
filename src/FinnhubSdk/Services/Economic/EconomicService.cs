@@ -48,4 +48,25 @@ internal sealed class EconomicService : IEconomicService
 
         return response;
     }
+
+    /// <inheritdoc/>
+    public async Task<IReadOnlyList<EconomicCode>> GetEconomicCodesAsync(CancellationToken cancellationToken = default)
+    {
+        _logger.LogDebug("Getting all economic indicator codes");
+
+        var response = await _httpClient.GetAsync<List<EconomicCode>>(
+            "economic/code",
+            null,
+            cancellationToken);
+
+        if (response == null)
+        {
+            _logger.LogWarning("No economic codes returned");
+            return [];
+        }
+
+        _logger.LogDebug("Retrieved {Count} economic indicator codes", response.Count);
+
+        return response;
+    }
 }

@@ -15,4 +15,11 @@ public interface IEconomicService
     /// <returns>Economic data with time series values</returns>
     /// <exception cref="ArgumentException">Thrown when code is null or whitespace</exception>
     Task<EconomicData?> GetEconomicDataAsync(string code, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets all available economic indicator codes
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>List of available economic indicator codes</returns>
+    Task<IReadOnlyList<EconomicCode>> GetEconomicCodesAsync(CancellationToken cancellationToken = default);
 }
