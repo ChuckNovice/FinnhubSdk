@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -24,6 +24,9 @@
     <!-- License -->
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 
+    <!-- Package Icon -->
+    <PackageIcon>icon.png</PackageIcon>
+
     <!-- Documentation -->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
@@ -38,6 +41,7 @@
   <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
     <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
+    <None Include="..\..\icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -51,7 +55,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <PackageReference Include="Polly" />
     <PackageReference Include="Polly.Extensions.Http" />
-    <PackageReference Include="System.Text.Json" />
+    <!-- System.Text.Json is included in .NET 10.0 runtime -->
   </ItemGroup>
 
   <ItemGroup>

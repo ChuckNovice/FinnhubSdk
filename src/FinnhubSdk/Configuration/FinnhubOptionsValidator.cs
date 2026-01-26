@@ -27,14 +27,19 @@ internal class FinnhubOptionsValidator : IValidateOptions<FinnhubOptions>
             return ValidateOptionsResult.Fail($"Invalid WebSocket URL: {options.WebSocketUrl}");
         }
 
-        if (options.TimeoutSeconds < 1 || options.TimeoutSeconds > 300)
+        if (options.Timeout < TimeSpan.FromSeconds(1) || options.Timeout > TimeSpan.FromMinutes(5))
         {
-            return ValidateOptionsResult.Fail("Timeout must be between 1 and 300 seconds");
+            return ValidateOptionsResult.Fail("Timeout must be between 1 second and 5 minutes");
         }
 
         if (options.MaxRetries < 0 || options.MaxRetries > 10)
         {
             return ValidateOptionsResult.Fail("Max retries must be between 0 and 10");
+        }
+
+        if (options.RetryDelay < TimeSpan.FromMilliseconds(100) || options.RetryDelay > TimeSpan.FromMinutes(1))
+        {
+            return ValidateOptionsResult.Fail("RetryDelay must be between 100 milliseconds and 1 minute");
         }
 
         return ValidateOptionsResult.Success;

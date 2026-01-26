@@ -53,8 +53,10 @@ public static class ServiceCollectionExtensions
         services.AddHttpClient<FinnhubHttpClient>((serviceProvider, client) =>
         {
             var options = serviceProvider.GetRequiredService<IOptions<FinnhubOptions>>().Value;
-            client.BaseAddress = new Uri(options.BaseUrl);
-            client.Timeout = TimeSpan.FromSeconds(options.TimeoutSeconds);
+            // Ensure base URL ends with '/' for proper relative URI resolution
+            var baseUrl = options.BaseUrl.EndsWith('/') ? options.BaseUrl : options.BaseUrl + "/";
+            client.BaseAddress = new Uri(baseUrl);
+            client.Timeout = options.Timeout;
         })
         .AddHttpMessageHandler<FinnhubAuthenticationHandler>()
         .AddHttpMessageHandler<RateLimitHandler>()
@@ -65,7 +67,7 @@ public static class ServiceCollectionExtensions
 
             return FinnhubPolicies.GetRetryPolicy(
                 options.MaxRetries,
-                options.RetryDelayMilliseconds,
+                options.RetryDelay,
                 logger);
         })
         .AddPolicyHandler((serviceProvider, _) =>
@@ -79,7 +81,7 @@ public static class ServiceCollectionExtensions
             var logger = serviceProvider.GetService<Microsoft.Extensions.Logging.ILogger<FinnhubHttpClient>>();
 
             return FinnhubPolicies.GetTimeoutPolicy(
-                options.TimeoutSeconds,
+                options.Timeout,
                 logger);
         });
 
