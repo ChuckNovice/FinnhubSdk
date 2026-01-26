@@ -1,4 +1,5 @@
 using FinnhubSdk.Services.Crypto;
+using FinnhubSdk.Services.Economic;
 using FinnhubSdk.Services.Forex;
 using FinnhubSdk.Services.News;
 using FinnhubSdk.Services.Stocks;
@@ -30,6 +31,11 @@ public interface IFinnhubClient
     /// Gets the crypto service for accessing cryptocurrency market data
     /// </summary>
     ICryptoService Crypto { get; }
+
+    /// <summary>
+    /// Gets the economic service for accessing macroeconomic data
+    /// </summary>
+    IEconomicService Economic { get; }
 
     /// <summary>
     /// Gets the WebSocket client for real-time trade streaming

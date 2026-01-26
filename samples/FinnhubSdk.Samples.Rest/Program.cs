@@ -316,4 +316,30 @@ catch (Exception ex)
 }
 Console.WriteLine();
 
+// 17. Economic Data
+Console.WriteLine("17. Getting economic data (US GDP)...");
+try
+{
+    // MA-USA-656880 is the code for US GDP
+    var economicData = await finnhub.Economic.GetEconomicDataAsync("MA-USA-656880");
+    if (economicData != null)
+    {
+        Console.WriteLine($"   Code: {economicData.Code}");
+        Console.WriteLine($"   Found {economicData.Data.Count} data points");
+        foreach (var point in economicData.Data.Take(5))
+        {
+            Console.WriteLine($"   {point.Date}: {point.Value:N2}");
+        }
+    }
+    else
+    {
+        Console.WriteLine("   No data returned");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"   Error: {ex.Message}");
+}
+Console.WriteLine();
+
 Console.WriteLine("=== Samples Complete ===");

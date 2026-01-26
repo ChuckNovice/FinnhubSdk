@@ -1,4 +1,5 @@
 using FinnhubSdk.Services.Crypto;
+using FinnhubSdk.Services.Economic;
 using FinnhubSdk.Services.Forex;
 using FinnhubSdk.Services.News;
 using FinnhubSdk.Services.Stocks;
@@ -24,6 +25,9 @@ internal sealed class FinnhubClient : IFinnhubClient
     public ICryptoService Crypto { get; }
 
     /// <inheritdoc/>
+    public IEconomicService Economic { get; }
+
+    /// <inheritdoc/>
     public IFinnhubWebSocketClient WebSocket { get; }
 
     /// <summary>
@@ -33,18 +37,21 @@ internal sealed class FinnhubClient : IFinnhubClient
     /// <param name="news">News service</param>
     /// <param name="forex">Forex service</param>
     /// <param name="crypto">Crypto service</param>
+    /// <param name="economic">Economic service</param>
     /// <param name="webSocket">WebSocket client</param>
     public FinnhubClient(
         IStocksService stocks,
         INewsService news,
         IForexService forex,
         ICryptoService crypto,
+        IEconomicService economic,
         IFinnhubWebSocketClient webSocket)
     {
         Stocks = stocks ?? throw new ArgumentNullException(nameof(stocks));
         News = news ?? throw new ArgumentNullException(nameof(news));
         Forex = forex ?? throw new ArgumentNullException(nameof(forex));
         Crypto = crypto ?? throw new ArgumentNullException(nameof(crypto));
+        Economic = economic ?? throw new ArgumentNullException(nameof(economic));
         WebSocket = webSocket ?? throw new ArgumentNullException(nameof(webSocket));
     }
 }
