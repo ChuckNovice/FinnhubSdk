@@ -2,6 +2,7 @@ using FinnhubSdk.Clients;
 using FinnhubSdk.Configuration;
 using FinnhubSdk.Infrastructure.Handlers;
 using FinnhubSdk.Infrastructure.Policies;
+using FinnhubSdk.Services.Forex;
 using FinnhubSdk.Services.News;
 using FinnhubSdk.Services.Stocks;
 using FinnhubSdk.WebSocket;
@@ -88,6 +89,7 @@ public static class ServiceCollectionExtensions
         // Register service interfaces
         services.AddScoped<IStocksService, StocksService>();
         services.AddScoped<INewsService, NewsService>();
+        services.AddScoped<IForexService, ForexService>();
 
         // Register WebSocket client as singleton (maintains connection across requests)
         services.AddSingleton<IFinnhubWebSocketClient, FinnhubWebSocketClient>();

@@ -274,4 +274,25 @@ catch (Exception ex)
 }
 Console.WriteLine();
 
+// 15. Forex Candles
+Console.WriteLine("15. Getting forex candles for EUR/USD (last 7 days)...");
+try
+{
+    var forexCandles = await finnhub.Forex.GetCandlesAsync(
+        "OANDA:EUR_USD",
+        CandleResolution.Day,
+        DateTime.UtcNow.AddDays(-7),
+        DateTime.UtcNow);
+    Console.WriteLine($"   Found {forexCandles.Count} forex candles");
+    foreach (var candle in forexCandles.Take(5))
+    {
+        Console.WriteLine($"   {candle.Timestamp:yyyy-MM-dd}: O={candle.Open:F5} H={candle.High:F5} L={candle.Low:F5} C={candle.Close:F5}");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"   Error: {ex.Message}");
+}
+Console.WriteLine();
+
 Console.WriteLine("=== Samples Complete ===");
