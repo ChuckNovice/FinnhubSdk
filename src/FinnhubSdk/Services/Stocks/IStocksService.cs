@@ -83,4 +83,12 @@ public interface IStocksService
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>List of peer stock symbols</returns>
     Task<IReadOnlyList<string>> GetCompanyPeersAsync(string symbol, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets insider transactions (SEC Form 4 filings) for a company
+    /// </summary>
+    /// <param name="symbol">Stock symbol (e.g., "AAPL", "MSFT")</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>List of insider transactions including buys and sells</returns>
+    Task<IReadOnlyList<InsiderTransaction>> GetInsiderTransactionsAsync(string symbol, CancellationToken cancellationToken = default);
 }

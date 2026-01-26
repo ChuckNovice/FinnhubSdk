@@ -261,4 +261,28 @@ internal sealed class StocksService : IStocksService
 
         return response;
     }
+
+    /// <inheritdoc/>
+    public async Task<IReadOnlyList<InsiderTransaction>> GetInsiderTransactionsAsync(string symbol, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(symbol))
+        {
+            throw new ArgumentException("Symbol cannot be null or whitespace", nameof(symbol));
+        }
+
+        _logger.LogDebug("Getting insider transactions for symbol: {Symbol}", symbol);
+
+        var response = await _httpClient.GetAsync<InsiderTransactionResponse>(
+            $"stock/insider-transactions?symbol={Uri.EscapeDataString(symbol)}",
+            null,
+            cancellationToken);
+
+        if (response == null || response.Data.Length == 0)
+        {
+            _logger.LogDebug("No insider transactions found for symbol: {Symbol}", symbol);
+            return Array.Empty<InsiderTransaction>();
+        }
+
+        return response.Data;
+    }
 }

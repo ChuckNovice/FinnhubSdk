@@ -239,4 +239,22 @@ catch (Exception ex)
 }
 Console.WriteLine();
 
+// 13. Insider Transactions
+Console.WriteLine("13. Getting insider transactions for AAPL...");
+try
+{
+    var transactions = await finnhub.Stocks.GetInsiderTransactionsAsync("AAPL");
+    Console.WriteLine($"   Found {transactions.Count} insider transactions");
+    foreach (var tx in transactions.Take(5))
+    {
+        var direction = tx.Change > 0 ? "BUY" : "SELL";
+        Console.WriteLine($"   {tx.FilingDate}: {tx.Name} - {direction} {Math.Abs(tx.Change):N0} shares @ ${tx.TransactionPrice:F2}");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"   Error: {ex.Message}");
+}
+Console.WriteLine();
+
 Console.WriteLine("=== Samples Complete ===");
