@@ -91,4 +91,12 @@ public interface IStocksService
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>List of insider transactions including buys and sells</returns>
     Task<IReadOnlyList<InsiderTransaction>> GetInsiderTransactionsAsync(string symbol, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets SEC filings for a company (10-K, 10-Q, 8-K, etc.)
+    /// </summary>
+    /// <param name="symbol">Stock symbol (e.g., "AAPL", "MSFT")</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>List of SEC filings with form type, dates, and URLs</returns>
+    Task<IReadOnlyList<SecFiling>> GetSecFilingsAsync(string symbol, CancellationToken cancellationToken = default);
 }
