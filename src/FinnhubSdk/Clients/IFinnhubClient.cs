@@ -1,3 +1,4 @@
+using FinnhubSdk.Services.Crypto;
 using FinnhubSdk.Services.Forex;
 using FinnhubSdk.Services.News;
 using FinnhubSdk.Services.Stocks;
@@ -24,6 +25,11 @@ public interface IFinnhubClient
     /// Gets the forex service for accessing foreign exchange market data
     /// </summary>
     IForexService Forex { get; }
+
+    /// <summary>
+    /// Gets the crypto service for accessing cryptocurrency market data
+    /// </summary>
+    ICryptoService Crypto { get; }
 
     /// <summary>
     /// Gets the WebSocket client for real-time trade streaming
