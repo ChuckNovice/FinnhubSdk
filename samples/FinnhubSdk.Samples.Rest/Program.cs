@@ -187,4 +187,25 @@ catch (Exception ex)
 }
 Console.WriteLine();
 
+// 10. Earnings Calendar
+Console.WriteLine("10. Getting earnings calendar (next 7 days)...");
+try
+{
+    var earnings = await finnhub.Stocks.GetEarningsCalendarAsync(DateTime.UtcNow, DateTime.UtcNow.AddDays(7));
+    Console.WriteLine($"   Found {earnings.Count} upcoming earnings releases");
+    foreach (var entry in earnings.Take(5))
+    {
+        Console.WriteLine($"   {entry.Symbol}: {entry.Date} ({entry.Hour})");
+        if (entry.EpsEstimate.HasValue)
+        {
+            Console.WriteLine($"      EPS Estimate: {entry.EpsEstimate:F2}");
+        }
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"   Error: {ex.Message}");
+}
+Console.WriteLine();
+
 Console.WriteLine("=== Samples Complete ===");
