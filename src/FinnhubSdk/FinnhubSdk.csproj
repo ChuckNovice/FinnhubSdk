@@ -53,6 +53,7 @@
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
     <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
     <PackageReference Include="Polly" />
     <PackageReference Include="Polly.Extensions.Http" />
     <!-- System.Text.Json is included in .NET 10.0 runtime -->

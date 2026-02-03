@@ -15,6 +15,7 @@ A modern .NET client for the [Finnhub Stock API](https://finnhub.io/) with REST 
 - **WebSocket Streaming** - Real-time trade data with auto-reconnect and async callbacks
 - **Modern .NET** - Built for .NET 10.0+ with nullable reference types and async/await
 - **Dependency Injection** - First-class support for Microsoft.Extensions.DependencyInjection
+- **Multi-Client Support** - Factory pattern for creating clients with different API keys at runtime
 - **Resilience** - Built-in retry policies, circuit breaker, and rate limit handling via Polly
 
 ## Installation
@@ -225,6 +226,82 @@ builder.Services.AddFinnhub(options =>
 | `ThrowException` | Throws `FinnhubRateLimitException` when rate limited |
 | `RetryWithBackoff` | Automatically retries with exponential backoff |
 | `QueueRequest` | Queues requests to stay within rate limits |
+
+## Multi-Client Support
+
+For scenarios where you need multiple clients with different API keys (e.g., multi-tenant applications), use the factory pattern:
+
+### Stateless Factory
+
+Use `IFinnhubClientFactory` when you want full control over client lifecycle:
+
+```csharp
+// Registration
+builder.Services.AddFinnhubFactory(options =>
+{
+    // Configure shared defaults (optional)
+    options.Timeout = TimeSpan.FromSeconds(60);
+});
+```
+
+```csharp
+// Usage - each call creates a new client
+public class StockService(IFinnhubClientFactory factory)
+{
+    public async Task<Quote> GetQuoteAsync(string userApiKey, string symbol)
+    {
+        var client = factory.CreateClient(userApiKey);
+        return await client.Stocks.GetQuoteAsync(symbol);
+    }
+}
+```
+
+### Cached Factory (Recommended for Multi-Tenant)
+
+Use `ICachedFinnhubClientFactory` for automatic caching, thread safety, and disposal:
+
+```csharp
+// Registration
+builder.Services.AddCachedFinnhubFactory(
+    configureCache: options =>
+    {
+        options.CacheOptions.SizeLimit = 500;                    // Max cached clients
+        options.EntryOptions.SlidingExpiration = TimeSpan.FromMinutes(60);  // Evict after 1 hour of inactivity
+    },
+    configureClient: options =>
+    {
+        options.Timeout = TimeSpan.FromSeconds(60);
+    });
+```
+
+```csharp
+// Usage - same API key returns cached instance
+public class StockService(ICachedFinnhubClientFactory factory, IAccountRepository accounts)
+{
+    public async Task<Quote> GetQuoteAsync(int userId, string symbol, CancellationToken ct)
+    {
+        var account = await accounts.GetAsync(userId, ct);
+        var client = factory.GetOrCreateClient(account.ApiKey);  // Thread-safe, cached
+        return await client.Stocks.GetQuoteAsync(symbol, ct);
+    }
+
+    public async Task OnUserLogoutAsync(int userId, CancellationToken ct)
+    {
+        var account = await accounts.GetAsync(userId, ct);
+        await factory.RemoveAsync(account.ApiKey);  // Removes from cache and disposes WebSocket
+    }
+}
+```
+
+### Factory Features
+
+| Feature | `IFinnhubClientFactory` | `ICachedFinnhubClientFactory` |
+|---------|-------------------------|-------------------------------|
+| Creates new instances | Always | On first call per key |
+| Thread-safe | N/A | Yes |
+| Automatic caching | No | Yes |
+| Automatic disposal | No | Yes (on eviction) |
+| Custom caching | Implement your own | Built-in with MemoryCache |
 
 ## Error Handling
 

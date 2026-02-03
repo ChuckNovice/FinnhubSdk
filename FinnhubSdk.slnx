@@ -4,6 +4,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/FinnhubSdk.Tests.Unit/FinnhubSdk.Tests.Unit.csproj" />
+    <Project Path="tests/FinnhubSdk.Tests.Integration/FinnhubSdk.Tests.Integration.csproj" />
   </Folder>
   <Folder Name="/samples/">
     <Project Path="samples/FinnhubSdk.Samples.Rest/FinnhubSdk.Samples.Rest.csproj" />

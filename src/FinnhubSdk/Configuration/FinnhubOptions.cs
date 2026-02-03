@@ -3,21 +3,11 @@ using System.ComponentModel.DataAnnotations;
 namespace FinnhubSdk.Configuration;
 
 /// <summary>
-/// Configuration options for the Finnhub SDK
+/// Shared configuration options for Finnhub clients (URLs, timeouts, retry policies).
+/// Used as the base configuration for both single-client DI registration and factory-created clients.
 /// </summary>
-public class FinnhubOptions
+public class FinnhubClientOptions
 {
-    /// <summary>
-    /// Configuration section name
-    /// </summary>
-    public const string SectionName = "Finnhub";
-
-    /// <summary>
-    /// Gets or sets the Finnhub API key (required)
-    /// </summary>
-    [Required(ErrorMessage = "Finnhub API key is required")]
-    public string ApiKey { get; set; } = string.Empty;
-
     /// <summary>
     /// Gets or sets the base URL for the Finnhub REST API
     /// </summary>
@@ -62,6 +52,24 @@ public class FinnhubOptions
     /// Gets or sets the rate limit strategy
     /// </summary>
     public RateLimitStrategy RateLimitStrategy { get; set; } = RateLimitStrategy.ThrowException;
+}
+
+/// <summary>
+/// Full configuration options for the Finnhub SDK, including API key.
+/// Used for single-client DI registration via AddFinnhub().
+/// </summary>
+public class FinnhubOptions : FinnhubClientOptions
+{
+    /// <summary>
+    /// Configuration section name
+    /// </summary>
+    public const string SectionName = "Finnhub";
+
+    /// <summary>
+    /// Gets or sets the Finnhub API key (required)
+    /// </summary>
+    [Required(ErrorMessage = "Finnhub API key is required")]
+    public string ApiKey { get; set; } = string.Empty;
 }
 
 /// <summary>
