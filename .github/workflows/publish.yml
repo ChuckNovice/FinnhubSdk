@@ -24,7 +24,9 @@ jobs:
       run: dotnet build -c Release --no-restore
 
     - name: Run unit tests
-      run: dotnet test -c Release --no-build --filter "TestCategory!=Integration"
+      run: dotnet test -c Release --no-build
+      env:
+        FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
 
     - name: Extract version from tag
       id: get_version

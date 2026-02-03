@@ -2,21 +2,18 @@ name: CI
 
 on:
   push:
-    branches: [ 'feature/**' ] 
+    branches: [main]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0  # Full history for versioning
+    - uses: actions/checkout@v4
 
-    - name: Setup .NET
+    - name: Setup .NET 10
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '10.0.x'
@@ -25,23 +22,12 @@ jobs:
       run: dotnet restore
 
     - name: Build
-      run: dotnet build --no-restore -c Release
+      run: dotnet build --no-restore
 
-    - name: Run Unit Tests
-      run: dotnet test --no-build -c Release --logger "trx;LogFileName=test-results.trx" --results-directory ./TestResults
+    - name: Run unit tests
+      run: dotnet test --no-build --verbosity normal
+      env:
+        FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
 
-    - name: Upload Test Results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: test-results
-        path: ./TestResults/*.trx
-
-    - name: Pack NuGet Package
-      run: dotnet pack src/FinnhubSdk/FinnhubSdk.csproj --no-build -c Release -o ./artifacts
-
-    - name: Upload NuGet Package
-      uses: actions/upload-artifact@v4
-      with:
-        name: nuget-package
-        path: ./artifacts/*.nupkg
+    - name: Check code formatting
+      run: dotnet format --verify-no-changes
