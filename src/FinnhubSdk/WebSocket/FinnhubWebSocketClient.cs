@@ -27,7 +27,7 @@ internal sealed class FinnhubWebSocketClient : IFinnhubWebSocketClient
     private Task? _receiveTask;
     private ConnectionState _state = ConnectionState.Disconnected;
     private int _reconnectAttempts;
-    private bool _disposed;
+    private int _disposed;
 
     private const int MaxReconnectAttempts = 5;
     private static readonly TimeSpan[] ReconnectDelays = new[]
@@ -206,12 +206,10 @@ internal sealed class FinnhubWebSocketClient : IFinnhubWebSocketClient
     /// <inheritdoc/>
     public async ValueTask DisposeAsync()
     {
-        if (_disposed)
+        if (Interlocked.Exchange(ref _disposed, 1) != 0)
         {
-            return;
+            return; // Already disposed
         }
-
-        _disposed = true;
 
         try
         {
@@ -391,14 +389,14 @@ internal sealed class FinnhubWebSocketClient : IFinnhubWebSocketClient
 
     private async Task HandleDisconnectionAsync(CancellationToken cancellationToken)
     {
-        if (_disposed || _state == ConnectionState.Failed)
+        if (_disposed != 0 || _state == ConnectionState.Failed)
         {
             return;
         }
 
         await SetStateAsync(ConnectionState.Reconnecting);
 
-        while (_reconnectAttempts < MaxReconnectAttempts && !_disposed)
+        while (_reconnectAttempts < MaxReconnectAttempts && _disposed == 0)
         {
             var delay = ReconnectDelays[Math.Min(_reconnectAttempts, ReconnectDelays.Length - 1)];
             _reconnectAttempts++;
@@ -562,9 +560,6 @@ internal sealed class FinnhubWebSocketClient : IFinnhubWebSocketClient
 
     private void ThrowIfDisposed()
     {
-        if (_disposed)
-        {
-            throw new ObjectDisposedException(nameof(FinnhubWebSocketClient));
-        }
+        ObjectDisposedException.ThrowIf(_disposed != 0, this);
     }
 }

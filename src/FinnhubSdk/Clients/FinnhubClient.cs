@@ -10,7 +10,7 @@ namespace FinnhubSdk.Clients;
 /// <summary>
 /// Main client facade for accessing all Finnhub API services
 /// </summary>
-internal sealed class FinnhubClient : IFinnhubClient
+public sealed class FinnhubClient : IFinnhubClient
 {
     /// <inheritdoc/>
     public IStocksService Stocks { get; }

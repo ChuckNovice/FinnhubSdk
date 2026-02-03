@@ -62,7 +62,12 @@ internal class FinnhubHttpClient
 
         try
         {
-            var response = await _httpClient.GetAsync(url, cancellationToken);
+            // Create request with per-request options for authentication handler
+            using var request = new HttpRequestMessage(HttpMethod.Get, url);
+            request.Options.Set(FinnhubRequestOptions.ApiKey, _options.ApiKey);
+            request.Options.Set(FinnhubRequestOptions.AuthMethod, _options.AuthMethod);
+
+            var response = await _httpClient.SendAsync(request, cancellationToken);
             return await ProcessResponseAsync<T>(response, cancellationToken);
         }
         catch (HttpRequestException ex)
